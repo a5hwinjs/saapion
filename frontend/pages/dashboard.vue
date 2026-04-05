@@ -42,6 +42,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 
+const config = useRuntimeConfig()
 const user = useSupabaseUser()
 const mockPlan = ref(null)
 const loading = ref(false)
@@ -67,7 +68,7 @@ const fetchActivePlan = async () => {
 
   loading.value = true
   try {
-    const res = await $fetch(`http://localhost:8000/api/get-plan/${userId}`)
+    const res = await $fetch(`${config.public.apiBase}/api/get-plan/${userId}`)
     if (res.status === 'success') {
       mockPlan.value = res.plan
     } else {
@@ -104,7 +105,7 @@ const generateNewPlan = async () => {
   mockPlan.value = null
 
   try {
-    const res = await $fetch(`http://localhost:8000/api/generate-plan/${userId}`, {
+    const res = await $fetch(`${config.public.apiBase}/api/generate-plan/${userId}`, {
       method: 'POST'
     })
     
