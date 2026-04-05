@@ -1,0 +1,28 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    /* Set global defaults: pastel background, dark slate text */
+    @apply font-sans bg-pastel-mint text-slate-900;
+  }
+}
+
+@layer utilities {
+  /* Enforce PWA layout constraints globally */
+  .saapion-app-container {
+    @apply max-w-md mx-auto min-h-screen relative overflow-x-hidden bg-pastel-mint shadow-2xl;
+  }
+  
+  /* Hide scrollbars for horizontal sliding lists */
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}

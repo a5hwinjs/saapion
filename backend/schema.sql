@@ -3,11 +3,14 @@
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
+-- Create Dietary Hierarchy ENUM
+CREATE TYPE dietary_level AS ENUM ('jain', 'veg', 'eggetarian', 'pescatarian', 'non-veg');
+
 -- Profiles table (extends auth.users)
 CREATE TABLE profiles (
     id UUID REFERENCES auth.users(id) PRIMARY KEY,
     full_name TEXT,
-    dietary_preference TEXT,
+    dietary_preference dietary_level,
     household_size INT DEFAULT 1,
     macro_goals_json JSONB,
     meal_prep_toggle BOOLEAN DEFAULT FALSE,
@@ -18,8 +21,8 @@ CREATE TABLE profiles (
 CREATE TABLE ingredients (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name TEXT NOT NULL,
-    category TEXT, -- e.g., 'lentils', 'spices', 'vegetables'
-    default_dietary_compatibility TEXT[], -- e.g., ['Vegan', 'Jain']
+    category ingredient_category DEFAULT 'Others',
+    diet_category dietary_level DEFAULT 'veg', -- e.g., 'veg', 'non-veg'
     is_common_indian BOOLEAN DEFAULT TRUE,
     image_url TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
@@ -45,6 +48,7 @@ CREATE TABLE recipes (
     cook_time_mins INT,
     macros_json JSONB,
     image_url TEXT,
+    source_url TEXT,
     is_quickie BOOLEAN DEFAULT FALSE,
     is_exotic BOOLEAN DEFAULT FALSE,
     exotic_ingredient_id UUID REFERENCES ingredients(id),
@@ -107,6 +111,11 @@ CREATE POLICY "Users can update their own profile." ON profiles FOR UPDATE USING
 CREATE POLICY "Users can manage their ingredient pool." ON user_ingredients FOR ALL USING (auth.uid() = user_id);
 CREATE POLICY "Users can manage their meal plans." ON meal_plans FOR ALL USING (auth.uid() = user_id);
 -- meal_plan_items requires join for policy or a simplified user_id column. We will add user_id for simpler RLS.
+ALTER TABLE meal_plan_items ADD COLUMN user_id UUID REFERENCES profiles(id);
+CREATE POLICY "Users can manage their meal plan items." ON meal_plan_items FOR ALL USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can manage their ratings." ON ratings FOR ALL USING (auth.uid() = user_id);
+d for simpler RLS.
 ALTER TABLE meal_plan_items ADD COLUMN user_id UUID REFERENCES profiles(id);
 CREATE POLICY "Users can manage their meal plan items." ON meal_plan_items FOR ALL USING (auth.uid() = user_id);
 

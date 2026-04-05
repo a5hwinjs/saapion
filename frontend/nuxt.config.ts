@@ -1,5 +1,6 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
+  css: ['~/assets/css/main.css'],
   modules: [
     '@nuxtjs/tailwindcss',
     '@vite-pwa/nuxt',
@@ -9,6 +10,12 @@ export default defineNuxtConfig({
     url: process.env.SUPABASE_URL,
     key: process.env.SUPABASE_KEY,
     redirect: false
+  },
+  runtimeConfig: {
+    public: {
+      supabaseUrl: process.env.SUPABASE_URL,
+      supabaseKey: process.env.SUPABASE_KEY
+    }
   },
   pwa: {
     manifest: {

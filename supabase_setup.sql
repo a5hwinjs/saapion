@@ -3,11 +3,16 @@
 -- 1. Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
+-- Create Dietary Hierarchy ENUM
+-- Ordered from most restrictive (jain) to least restrictive (non-veg)
+-- This allows numeric comparison (e.g., veg <= 2)
+CREATE TYPE dietary_level AS ENUM ('jain', 'veg', 'eggetarian', 'pescatarian', 'non-veg');
+
 -- 2. Create the Profiles table (extends auth.users)
 CREATE TABLE IF NOT EXISTS public.profiles (
     id UUID REFERENCES auth.users(id) PRIMARY KEY,
     full_name TEXT,
-    dietary_preference TEXT,
+    dietary_preference dietary_level,
     household_size INT DEFAULT 1,
     macro_goals_json JSONB,
     meal_prep_toggle BOOLEAN DEFAULT FALSE,
@@ -18,8 +23,8 @@ CREATE TABLE IF NOT EXISTS public.profiles (
 CREATE TABLE IF NOT EXISTS public.ingredients (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name TEXT NOT NULL,
-    category TEXT,
-    default_dietary_compatibility TEXT[],
+    category ingredient_category DEFAULT 'Others',
+    diet_category dietary_level DEFAULT 'veg',
     is_common_indian BOOLEAN DEFAULT TRUE,
     image_url TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
@@ -45,6 +50,7 @@ CREATE TABLE IF NOT EXISTS public.recipes (
     cook_time_mins INT,
     macros_json JSONB,
     image_url TEXT,
+    source_url TEXT,
     is_quickie BOOLEAN DEFAULT FALSE,
     is_exotic BOOLEAN DEFAULT FALSE,
     exotic_ingredient_id UUID REFERENCES public.ingredients(id),
@@ -101,11 +107,14 @@ ALTER TABLE public.meal_plan_items ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.ratings ENABLE ROW LEVEL SECURITY;
 
 -- 11. Set up Security Policies
-CREATE POLICY "Users can view their own profile." ON public.profiles FOR SELECT USING (auth.uid() = id);
-CREATE POLICY "Users can update their own profile." ON public.profiles FOR UPDATE USING (auth.uid() = id);
-CREATE POLICY "Users can insert their own profile." ON public.profiles FOR INSERT WITH CHECK (auth.uid() = id);
+CREATE POLICY "Owners can manage their own profile" ON public.profiles FOR ALL TO authenticated USING (auth.uid() = id) WITH CHECK (auth.uid() = id);
 
-CREATE POLICY "Users can manage their ingredient pool." ON public.user_ingredients FOR ALL USING (auth.uid() = user_id);
+GRANT ALL ON public.profiles TO authenticated;
+GRANT ALL ON public.profiles TO service_role;
+
+CREATE POLICY "Users can manage their ingredient pool" ON public.user_ingredients FOR ALL TO authenticated USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+GRANT ALL ON public.user_ingredients TO authenticated;
+
 CREATE POLICY "Users can manage their meal plans." ON public.meal_plans FOR ALL USING (auth.uid() = user_id);
 CREATE POLICY "Users can manage their meal plan items." ON public.meal_plan_items FOR ALL USING (auth.uid() = user_id);
 CREATE POLICY "Users can manage their ratings." ON public.ratings FOR ALL USING (auth.uid() = user_id);
@@ -115,10 +124,18 @@ CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS trigger AS $$
 BEGIN
   INSERT INTO public.profiles (id, full_name)
-  VALUES (new.id, COALESCE(new.raw_user_meta_data->>'full_name', new.raw_user_meta_data->>'name', 'New User'));
+  VALUES (new.id, COALESCE(new.raw_user_meta_data->>'full_name', new.raw_user_meta_data->>'name', 'New User'))
+  ON CONFLICT (id) DO NOTHING;
   RETURN new;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
+
+-- 13. Create the sign-up trigger
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+sql SECURITY DEFINER SET search_path = public;
 
 -- 13. Create the sign-up trigger
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;

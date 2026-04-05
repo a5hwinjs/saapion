@@ -1,90 +1,81 @@
 <template>
-  <div class="max-w-4xl mx-auto p-6 mt-6 bg-white rounded-lg shadow">
-    <button @click="$router.back()" class="text-green-600 mb-4 hover:underline">&larr; Back</button>
+  <!-- Main layout restricted to mobile bounds -->
+  <div class="saapion-app-container bg-pastel-lavender flex flex-col">
     
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-4 mb-6">
-      <div>
-        <h1 class="text-3xl font-bold text-gray-900 capitalize">{{ formattedId }}</h1>
-        <p class="text-gray-500 mt-2">⏱ Prep: 15m | 🔥 Cook: 20m | 🌿 Pure Veg</p>
-      </div>
-      <div class="mt-4 md:mt-0 flex space-x-2">
-        <button class="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50">Save</button>
-        <button @click="cookNow" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Cook Now</button>
-      </div>
+    <!-- Top 40%: The Isolated Food Image Area -->
+    <div class="relative h-[40vh] w-full flex items-center justify-center p-6">
+      <button @click="$router.back()" class="absolute top-6 left-6 w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-soft z-20 text-slate-900 hover:bg-gray-50">
+        <span class="font-extrabold text-xl">&larr;</span>
+      </button>
+      
+      <!-- Floating food image (requires background-removed PNGs) -->
+      <img src="https://via.placeholder.com/300" alt="Recipe Image" class="w-64 h-64 object-contain drop-shadow-2xl z-10" />
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <!-- Ingredients Sidebar -->
-      <div class="md:col-span-1 bg-gray-50 p-4 rounded-lg self-start">
-        <h3 class="text-lg font-semibold mb-4 text-gray-800">Ingredients</h3>
-        <ul class="space-y-3">
-          <li v-for="ing in requiredIngredients" :key="ing.name" class="flex items-start">
-            <span v-if="ing.inPantry" class="text-green-500 mr-2 font-bold">✓</span>
-            <span v-else class="text-red-500 mr-2 font-bold">✗</span>
-            <div>
-              <span class="text-gray-800 font-medium">{{ ing.quantity }}</span>
-              <span class="text-gray-700 ml-1">{{ ing.name }}</span>
-              <p v-if="!ing.inPantry" class="text-xs text-red-600 mt-0.5 font-semibold">Missing: Add to grocery list</p>
-            </div>
-          </li>
-        </ul>
-      </div>
-
-      <!-- Instructions & Macros -->
-      <div class="md:col-span-2">
-        <h3 class="text-lg font-semibold mb-4 text-gray-800">Instructions</h3>
-        <ol class="list-decimal list-inside space-y-4 text-gray-700 mb-8">
-          <li>Heat oil in a pan, add mustard seeds and let them splutter.</li>
-          <li>Add chopped onions, green chilies, and curry leaves. Sauté until onions are translucent.</li>
-          <li>Add turmeric powder, salt, and the main ingredient. Mix well.</li>
-          <li>Cook for 10-15 minutes on medium heat, stirring occasionally.</li>
-          <li>Garnish with fresh coriander leaves and serve hot.</li>
-        </ol>
-        
-        <div class="bg-blue-50 border border-blue-100 p-4 rounded-lg">
-          <h4 class="font-semibold text-blue-900 mb-2">Estimated Macros (Per Serving)</h4>
-          <div class="flex flex-wrap gap-4 text-sm">
-            <div class="bg-white px-3 py-1 rounded shadow-sm"><span class="font-bold text-blue-800">Calories:</span> 320</div>
-            <div class="bg-white px-3 py-1 rounded shadow-sm"><span class="font-bold text-blue-800">Protein:</span> 12g</div>
-            <div class="bg-white px-3 py-1 rounded shadow-sm"><span class="font-bold text-blue-800">Carbs:</span> 45g</div>
-            <div class="bg-white px-3 py-1 rounded shadow-sm"><span class="font-bold text-blue-800">Fats:</span> 10g</div>
+    <!-- Bottom 60%: The White Bottom Sheet -->
+    <div class="bg-white rounded-t-[40px] shadow-soft z-10 -mt-10 flex-1 p-8 relative flex flex-col">
+      
+      <!-- Recipe Title & Profile Snippet -->
+      <div class="flex justify-between items-start mb-6">
+        <div>
+          <h1 class="text-4xl font-extrabold text-slate-900 capitalize leading-tight">{{ formattedId }}</h1>
+          <div class="flex items-center gap-2 mt-3">
+            <div class="w-6 h-6 rounded-full bg-accent-yellow flex items-center justify-center text-xs font-extrabold text-slate-900">A</div>
+            <span class="text-sm font-medium text-slate-500">From Ashwin's Plan</span>
           </div>
         </div>
       </div>
-    </div>
-    
-    <!-- Post-Recipe Feedback Modal (Simplified) -->
-    <div v-if="showFeedback" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div class="bg-white rounded-lg shadow-xl p-6 max-w-md w-full">
-        <h2 class="text-xl font-bold mb-4">How did it go?</h2>
-        <div class="space-y-6 mb-6">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Did you cook this today?</label>
-            <div class="flex space-x-4">
-              <label class="flex items-center cursor-pointer"><input type="radio" v-model="feedback.cooked" :value="true" class="mr-2 text-green-600 focus:ring-green-500 h-4 w-4" /> Yes</label>
-              <label class="flex items-center cursor-pointer"><input type="radio" v-model="feedback.cooked" :value="false" class="mr-2 text-green-600 focus:ring-green-500 h-4 w-4" /> No</label>
-            </div>
-          </div>
-          <div v-if="feedback.cooked" class="space-y-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Difficulty: {{ feedback.difficulty }}/5</label>
-              <input type="range" min="1" max="5" v-model="feedback.difficulty" class="w-full accent-green-600" />
-              <div class="flex justify-between text-xs text-gray-500 mt-1"><span>Easy</span><span>Hard</span></div>
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Taste: {{ feedback.taste }}/5</label>
-              <input type="range" min="1" max="5" v-model="feedback.taste" class="w-full accent-green-600" />
-              <div class="flex justify-between text-xs text-gray-500 mt-1"><span>Needs Improvement</span><span>Delicious</span></div>
-            </div>
-          </div>
+
+      <!-- Quick Metrics (Pill Shaped) -->
+      <div class="flex gap-3 mb-8 overflow-x-auto pb-2 hide-scrollbar">
+        <div class="bg-pastel-mint px-5 py-2.5 rounded-full flex items-center justify-center whitespace-nowrap">
+          <span class="text-sm font-bold text-accent-midnight">⏱ 30 Min</span>
         </div>
-        <div class="flex justify-end space-x-3">
-          <button @click="showFeedback = false" class="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50 font-medium">Cancel</button>
-          <button @click="submitFeedback" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 font-medium">Log Metrics</button>
+        <div class="bg-accent-yellow/20 px-5 py-2.5 rounded-full flex items-center justify-center whitespace-nowrap">
+          <span class="text-sm font-bold text-yellow-700">🔥 10 Steps</span>
+        </div>
+        <div class="bg-accent-teal/20 px-5 py-2.5 rounded-full flex items-center justify-center whitespace-nowrap">
+          <span class="text-sm font-bold text-teal-800">🌿 Pure Veg</span>
         </div>
       </div>
-    </div>
 
+      <!-- Ingredient Pool Vertical Flex -->
+      <div class="mb-10">
+        <h2 class="text-xl font-bold text-slate-900 mb-5">Ingredient Pool</h2>
+        <div class="flex gap-4 overflow-x-auto pb-4 hide-scrollbar">
+          
+          <div 
+            v-for="ing in requiredIngredients" 
+            :key="ing.name" 
+            class="flex flex-col items-center justify-center bg-slate-50 rounded-[32px] p-4 min-w-[100px] shadow-sm relative border-2"
+            :class="ing.inPantry ? 'border-transparent' : 'border-alert-red bg-alert-red/5'"
+          >
+            <!-- Missing Indicator Badge -->
+            <div v-if="!ing.inPantry" class="absolute -top-2 -right-2 w-6 h-6 bg-alert-red rounded-full flex items-center justify-center text-white text-xs font-bold shadow-sm">!</div>
+            
+            <!-- Ingredient Image (or Emoji placeholder) -->
+            <div class="w-14 h-14 bg-white rounded-full mb-3 shadow-inner flex items-center justify-center text-2xl">
+              🥥
+            </div>
+            
+            <span class="text-sm font-extrabold text-slate-900 text-center">{{ ing.quantity }}</span>
+            <span class="text-xs font-medium text-slate-500 text-center mt-1">{{ ing.name }}</span>
+            
+            <!-- Actionable alert text -->
+            <span v-if="!ing.inPantry" class="text-[10px] font-bold text-alert-red mt-2 text-center tracking-wider uppercase">MISSING</span>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Primary Sticky Action -->
+      <div class="mt-auto pt-4">
+        <button class="w-full bg-accent-teal text-white text-xl font-extrabold py-5 rounded-full shadow-soft hover:bg-teal-500 transition-transform active:scale-95">
+          Start Cooking
+        </button>
+      </div>
+
+    </div>
   </div>
 </template>
 
@@ -92,31 +83,13 @@
 import { computed, ref } from 'vue'
 
 const route = useRoute()
-const id = route.params.id || ''
+const id = route.params.id || 'lemon-rice'
 const formattedId = computed(() => id.toString().replace(/-/g, ' '))
 
-// Mock logic comparing against user pantry
+// Mock logic
 const requiredIngredients = ref([
   { name: 'Toor Dal', quantity: '1 cup', inPantry: true },
-  { name: 'Mustard Seeds', quantity: '1 tsp', inPantry: true },
-  { name: 'Curry Leaves', quantity: '1 sprig', inPantry: true },
+  { name: 'Mustard', quantity: '1 tsp', inPantry: true },
   { name: 'Fresh Coconut', quantity: '1/2 cup', inPantry: false },
-  { name: 'Tamarind', quantity: 'lemon sized', inPantry: true },
 ])
-
-const showFeedback = ref(false)
-const feedback = ref({
-  cooked: true,
-  difficulty: 3,
-  taste: 4
-})
-
-const cookNow = () => {
-  showFeedback.value = true
-}
-
-const submitFeedback = () => {
-  alert("Metrics saved to database! The Recommendation Engine will learn from this to refine your future meal plans.")
-  showFeedback.value = false
-}
 </script>
