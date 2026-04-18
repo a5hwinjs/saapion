@@ -116,7 +116,7 @@ const generateNewPlan = async () => {
     }
   } catch (error) {
     console.error(error)
-    errorMsg.value = "Failed to connect to the Recommendation Engine. Is the FastAPI backend running?"
+    errorMsg.value = `Failed to connect to the Recommendation Engine at ${config.public.apiBase}. Is the FastAPI backend running?`
   } finally {
     loading.value = false
   }

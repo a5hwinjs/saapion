@@ -18,17 +18,15 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Only copy the necessary output from the builder stage
+# Copy the entire .output directory which contains both /server and /public
 COPY --from=builder /app/.output ./.output
 
-# Nuxt output includes its own package.json if needed, but for node server
-# it's usually self-contained in .output/server/index.mjs.
-# However, Nitro needs the .output directory structure to be intact.
+# Nuxt/Nitro environment variables
+ENV PORT=3000
+ENV HOST=0.0.0.0
+ENV NODE_ENV=production
 
 EXPOSE 3000
 
-ENV PORT=3000
-ENV NODE_ENV=production
-
-# Start command for Nuxt 3 production server
+# Use the bundled server entry point
 CMD ["node", ".output/server/index.mjs"]
