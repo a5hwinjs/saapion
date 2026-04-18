@@ -24,6 +24,9 @@ WORKDIR /app
 # Copy the entire .output directory
 COPY --from=builder /app/.output ./.output
 
+# Fix Nitro path resolution bug: Symlink the public directory to where the server mistakenly looks for it
+RUN mkdir -p /app/.output/server/chunks && ln -s /app/.output/public /app/.output/server/chunks/public
+
 # Nuxt/Nitro environment variables
 ENV PORT=3000
 ENV HOST=0.0.0.0
