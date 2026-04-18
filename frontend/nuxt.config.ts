@@ -18,6 +18,10 @@ export default defineNuxtConfig({
       apiBase: (process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:8000').replace(/\/$/, '')
     }
   },
+  nitro: {
+    preset: 'node-server',
+    serveStatic: true
+  },
   pwa: {
     manifest: {
       name: 'Saapion',
