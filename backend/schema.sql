@@ -36,10 +36,12 @@ CREATE TABLE IF NOT EXISTS ingredients (
 );
 
 -- User's Ingredient Pool
-CREATE TABLE IF NOT EXISTS user_ingredients (
+CREATE TABLE IF NOT EXISTS user_pantry (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
     ingredient_id UUID REFERENCES ingredients(id) ON DELETE CASCADE,
+    amount NUMERIC DEFAULT 0,
+    unit TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
     UNIQUE(user_id, ingredient_id)
 );
@@ -107,7 +109,7 @@ CREATE TABLE IF NOT EXISTS ratings (
 -- RLS (Row Level Security) Setup
 -- Enable RLS for user-specific tables
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
-ALTER TABLE user_ingredients ENABLE ROW LEVEL SECURITY;
+ALTER TABLE user_pantry ENABLE ROW LEVEL SECURITY;
 ALTER TABLE meal_plans ENABLE ROW LEVEL SECURITY;
 ALTER TABLE meal_plan_items ENABLE ROW LEVEL SECURITY;
 ALTER TABLE ratings ENABLE ROW LEVEL SECURITY;
@@ -116,7 +118,39 @@ ALTER TABLE ratings ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can view their own profile." ON profiles FOR SELECT USING (auth.uid() = id);
 CREATE POLICY "Users can update their own profile." ON profiles FOR UPDATE USING (auth.uid() = id);
 
-CREATE POLICY "Users can manage their ingredient pool." ON user_ingredients FOR ALL USING (auth.uid() = user_id);
+CREATE POLICY "Users can manage their ingredient pool." ON user_pantry FOR ALL USING (auth.uid() = user_id);
 CREATE POLICY "Users can manage their meal plans." ON meal_plans FOR ALL USING (auth.uid() = user_id);
 CREATE POLICY "Users can manage their meal plan items." ON meal_plan_items FOR ALL USING (auth.uid() = user_id);
 CREATE POLICY "Users can manage their ratings." ON ratings FOR ALL USING (auth.uid() = user_id);
+-- Update Supabase Schema for Saapion
+
+CREATE TABLE IF NOT EXISTS public.pantry (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
+    ingredient_id UUID REFERENCES public.ingredients(id) ON DELETE CASCADE,
+    amount NUMERIC DEFAULT 0,
+    unit TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+    UNIQUE(user_id, ingredient_id)
+);
+
+CREATE TABLE IF NOT EXISTS public.user_macros (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
+    date DATE NOT NULL DEFAULT CURRENT_DATE,
+    calories NUMERIC DEFAULT 0,
+    protein NUMERIC DEFAULT 0,
+    carbs NUMERIC DEFAULT 0,
+    fats NUMERIC DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+    UNIQUE(user_id, date)
+);
+
+ALTER TABLE public.pantry ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.user_macros ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can manage their pantry." ON public.pantry FOR ALL USING (auth.uid() = user_id);
+GRANT ALL ON public.pantry TO authenticated;
+
+CREATE POLICY "Users can manage their macros." ON public.user_macros FOR ALL USING (auth.uid() = user_id);
+GRANT ALL ON public.user_macros TO authenticated;

@@ -131,7 +131,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
@@ -151,6 +151,30 @@ const profile = ref({
   household_size: 1,
   macros: { protein: 50, carbs: 250, fat: 60 },
   meal_prep_toggle: false
+})
+
+onMounted(async () => {
+  let userId = user.value?.id
+  if (!userId) {
+    const { data: { session } } = await supabase.auth.getSession()
+    userId = session?.user?.id
+  }
+  if (!userId) return
+
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('dietary_preference, household_size, macro_goals_json, meal_prep_toggle')
+    .eq('id', userId)
+    .single()
+
+  if (data && !error) {
+    if (data.dietary_preference) profile.value.dietary_preference = data.dietary_preference
+    if (data.household_size) profile.value.household_size = data.household_size
+    if (data.macro_goals_json) {
+      profile.value.macros = { ...profile.value.macros, ...data.macro_goals_json }
+    }
+    if (data.meal_prep_toggle !== null) profile.value.meal_prep_toggle = data.meal_prep_toggle
+  }
 })
 
 const totalCalories = computed(() => {

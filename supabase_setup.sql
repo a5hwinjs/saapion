@@ -38,12 +38,27 @@ CREATE TABLE IF NOT EXISTS public.ingredients (
 );
 
 -- 4. Create User's Ingredient Pool
-CREATE TABLE IF NOT EXISTS public.user_ingredients (
+CREATE TABLE IF NOT EXISTS public.user_pantry (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
     ingredient_id UUID REFERENCES public.ingredients(id) ON DELETE CASCADE,
+    amount NUMERIC DEFAULT 0,
+    unit TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
     UNIQUE(user_id, ingredient_id)
+);
+
+-- 4.5 Create User's Macros
+CREATE TABLE IF NOT EXISTS public.user_macros (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
+    date DATE NOT NULL DEFAULT CURRENT_DATE,
+    calories NUMERIC DEFAULT 0,
+    protein NUMERIC DEFAULT 0,
+    carbs NUMERIC DEFAULT 0,
+    fats NUMERIC DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+    UNIQUE(user_id, date)
 );
 
 -- 5. Create Recipes table
@@ -108,7 +123,7 @@ CREATE TABLE IF NOT EXISTS public.ratings (
 
 -- 10. Enable Row Level Security (RLS)
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.user_ingredients ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.user_pantry ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.meal_plans ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.meal_plan_items ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.ratings ENABLE ROW LEVEL SECURITY;
@@ -119,12 +134,16 @@ CREATE POLICY "Owners can manage their own profile" ON public.profiles FOR ALL T
 GRANT ALL ON public.profiles TO authenticated;
 GRANT ALL ON public.profiles TO service_role;
 
-CREATE POLICY "Users can manage their ingredient pool" ON public.user_ingredients FOR ALL TO authenticated USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
-GRANT ALL ON public.user_ingredients TO authenticated;
+CREATE POLICY "Users can manage their ingredient pool" ON public.user_pantry FOR ALL TO authenticated USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+GRANT ALL ON public.user_pantry TO authenticated;
 
 CREATE POLICY "Users can manage their meal plans." ON public.meal_plans FOR ALL USING (auth.uid() = user_id);
 CREATE POLICY "Users can manage their meal plan items." ON public.meal_plan_items FOR ALL USING (auth.uid() = user_id);
 CREATE POLICY "Users can manage their ratings." ON public.ratings FOR ALL USING (auth.uid() = user_id);
+
+ALTER TABLE public.user_macros ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users can manage their macros." ON public.user_macros FOR ALL USING (auth.uid() = user_id);
+GRANT ALL ON public.user_macros TO authenticated;
 
 -- 12. Create the auto-profile function
 CREATE OR REPLACE FUNCTION public.handle_new_user()

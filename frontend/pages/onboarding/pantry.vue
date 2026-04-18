@@ -92,7 +92,7 @@ onMounted(async () => {
     
     if (userId) {
       const { data: userIngs, error: userError } = await supabase
-        .from('user_ingredients')
+        .from('user_pantry')
         .select('ingredient_id')
         .eq('user_id', userId)
       
@@ -173,7 +173,7 @@ const savePantry = async () => {
 
   saving.value = true
   try {
-    await supabase.from('user_ingredients').delete().eq('user_id', userId)
+    await supabase.from('user_pantry').delete().eq('user_id', userId)
     
     const inserts = selectedIngredients.value.map(ingId => ({
       user_id: userId,
@@ -181,8 +181,15 @@ const savePantry = async () => {
     }))
 
     if (inserts.length > 0) {
-      const { error } = await supabase.from('user_ingredients').insert(inserts)
+      const { error } = await supabase.from('user_pantry').insert(inserts)
       if (error) throw error
+      
+      const config = useRuntimeConfig()
+      const apiBase = config.public.apiBase || 'http://localhost:8000'
+      await $fetch(`${apiBase}/api/pantry/init`, {
+        method: 'POST',
+        body: { user_id: userId, ingredients: selectedIngredients.value }
+      })
     }
     
     navigateTo('/dashboard')

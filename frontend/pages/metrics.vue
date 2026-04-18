@@ -1,145 +1,187 @@
 <template>
-  <div class="saapion-metrics">
-    <!-- Hero: Daily Summary -->
-    <section v-if="!loading" class="space-y-8 mb-16">
-      <div class="flex justify-between items-end">
-        <div>
-          <h2 class="font-headline text-4xl md:text-5xl font-extrabold tracking-tight text-primary">Daily Alchemy</h2>
-          <p class="text-on-surface-variant mt-2 text-lg">Your personalized fuel metrics for today.</p>
+  <div class="bg-background text-on-background font-body min-h-screen pb-24 md:pb-0">
+    <!-- TopAppBar -->
+    <header class="bg-background/80 backdrop-blur-md sticky top-0 z-50 flex justify-between items-center px-6 py-4 w-full transition-colors duration-300 shadow-sm">
+      <div class="flex items-center gap-4">
+        <div class="w-10 h-10 rounded-full overflow-hidden bg-surface-variant flex-shrink-0">
+          <img alt="User profile photo" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDTDA2SdmdnAfTQ7EfxqaQytoSf8PFpnzQH2VBokTwD2TtAhCxOw_h6s_geWj9tnPKkpDy0630PNfTuL_TjUVnapJpNu3-LzE_0HiPky_J1QTy6wytf2EqISQ04g335INQfivtV1wxVAcKf_GdQ4jktg2gCsjorF7qKf_4v5sW4ZLfBDMiq_lAbFGFxU2-VnXezPG13GWVQgtdJJy378hA91c-2ya0wF76UtxfdGkmQlamLvzojYE3wjU05g11zMvJ7so-XJyaqE613" />
         </div>
-        <div class="hidden sm:flex items-center gap-2 bg-secondary-container px-4 py-2 rounded-full shadow-sm">
-          <span class="material-symbols-outlined text-on-secondary-container text-sm" style="font-variation-settings: 'FILL' 1;">eco</span>
-          <span class="text-xs font-bold uppercase tracking-widest text-on-secondary-container">On Track</span>
-        </div>
+        <h1 class="text-2xl font-extrabold text-primary tracking-tighter font-headline">Saapion</h1>
+      </div>
+      <div class="hidden md:flex gap-6">
+        <NuxtLink to="/dashboard" class="font-bold text-stone-500 hover:text-primary">Dashboard</NuxtLink>
+        <NuxtLink to="/pantry" class="font-bold text-stone-500 hover:text-primary">Pantry</NuxtLink>
+        <NuxtLink to="/metrics" class="font-bold text-primary border-b-2 border-primary">Metrics</NuxtLink>
+      </div>
+    </header>
+
+    <main class="flex-grow max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 space-y-10">
+      <!-- Loading State -->
+      <div v-if="loading" class="flex justify-center py-20">
+        <div class="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
       </div>
 
-      <!-- Bento Grid -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        <!-- Main Calorie Card -->
-        <div class="lg:col-span-8 bg-surface-container-low rounded-[2.5rem] p-8 md:p-12 shadow-sm relative overflow-hidden flex flex-col md:flex-row items-center gap-12 group hover:bg-surface-container transition-all duration-500 border border-outline-variant/10">
-          <!-- Decorative element -->
-          <div class="absolute -right-20 -top-20 w-64 h-64 bg-primary-container/10 rounded-full blur-3xl group-hover:bg-primary-container/20 transition-colors"></div>
-          
-          <!-- Circular Progress -->
-          <div class="relative w-48 h-48 flex-shrink-0 z-10">
-            <svg class="w-full h-full transform -rotate-90" viewbox="0 0 100 100">
-              <circle class="text-surface-variant stroke-current" cx="50" cy="50" fill="none" r="45" stroke-width="8"></circle>
-              <circle class="text-primary stroke-current" cx="50" cy="50" fill="none" r="45" :stroke-dasharray="282.7" :stroke-dashoffset="282.7 - (282.7 * caloriePercentage / 100)" stroke-linecap="round" stroke-width="8"></circle>
-            </svg>
-            <div class="absolute inset-0 flex flex-col items-center justify-center">
-              <span class="font-headline text-4xl font-extrabold text-on-surface">{{ Math.round(totalCaloriesConsumed) }}</span>
-              <span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-[0.2em] mt-1">Kcal</span>
+      <div v-else>
+        <!-- Hero: Daily Summary -->
+        <section class="space-y-6">
+          <div class="flex justify-between items-end">
+            <div>
+              <h2 class="font-headline text-3xl md:text-4xl font-bold tracking-tight text-primary">Daily Alchemy</h2>
+              <p class="text-on-surface-variant mt-1 text-sm md:text-base">Your personalized fuel metrics for today.</p>
+            </div>
+            <div class="hidden sm:flex items-center gap-2 bg-surface-container-highest px-4 py-2 rounded-full">
+              <span class="material-symbols-outlined text-secondary icon-fill text-sm">eco</span>
+              <span class="text-xs font-bold uppercase tracking-widest text-secondary">On Track</span>
             </div>
           </div>
 
-          <div class="flex-grow text-center md:text-left space-y-4 z-10">
-            <h3 class="font-headline text-2xl font-bold text-on-surface tracking-tight">Energy Balance</h3>
-            <p class="text-on-surface-variant text-base leading-relaxed max-w-sm">You've consumed {{ caloriePercentage }}% of your daily target. A great pace to maintain steady energy levels through the evening.</p>
-            <div class="pt-2 text-sm font-bold text-primary flex items-center gap-2">
-              <span class="material-symbols-outlined text-sm">flag</span>
-              Target: {{ Math.round(totalCaloriesGoal) }} kcal
-            </div>
-          </div>
-        </div>
-
-        <!-- Macros Stack -->
-        <div class="lg:col-span-4 flex flex-col gap-4">
-          <!-- Protein -->
-          <div class="bg-surface-container-lowest rounded-3xl p-6 shadow-sm border border-outline-variant/5 hover:bg-surface-dim transition-colors group">
-            <div class="flex justify-between items-center mb-4">
-              <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-full bg-tertiary-container/30 flex items-center justify-center text-tertiary group-hover:scale-110 transition-transform">
-                  <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">fitness_center</span>
+          <!-- Bento Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+            <!-- Main Calorie Card -->
+            <div class="md:col-span-7 lg:col-span-8 bg-surface-container-lowest rounded-[1.5rem] p-6 sm:p-8 shadow-sm relative overflow-hidden flex flex-col sm:flex-row items-center gap-8 group hover:bg-surface-dim transition-colors duration-300">
+              <div class="relative w-40 h-40 flex-shrink-0">
+                <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                  <circle class="stroke-surface-variant" cx="50" cy="50" fill="none" r="45" stroke-linecap="round" stroke-width="6"></circle>
+                  <circle class="stroke-primary transition-all duration-1000" cx="50" cy="50" fill="none" r="45" stroke-dasharray="282.7" :stroke-dashoffset="282.7 - (282.7 * Math.min(1, macros.calories / dailyGoal.calories))" stroke-linecap="round" stroke-width="6"></circle>
+                </svg>
+                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                  <span class="font-headline text-3xl font-extrabold text-on-surface">{{ Math.round(macros.calories) }}</span>
+                  <span class="text-xs font-semibold text-on-surface-variant uppercase tracking-widest mt-1">Kcal</span>
                 </div>
-                <span class="font-bold text-sm text-on-surface uppercase tracking-widest">Protein</span>
               </div>
-              <span class="text-xs font-extrabold text-tertiary">{{ Math.round(dailyConsumption.protein) }}g <span class="text-on-surface-variant/50 font-medium">/ {{ macroGoals.protein }}g</span></span>
+              <div class="flex-grow text-center sm:text-left space-y-2 z-10">
+                <h3 class="font-headline text-xl font-bold text-on-surface">Energy Balance</h3>
+                <p class="text-on-surface-variant text-sm leading-relaxed">
+                  You've consumed {{ Math.round((macros.calories / dailyGoal.calories) * 100) }}% of your daily target.
+                </p>
+                <div class="pt-2 text-xs font-medium text-primary">Target: {{ dailyGoal.calories }} kcal</div>
+              </div>
             </div>
-            <div class="w-full h-1.5 bg-surface-variant rounded-full overflow-hidden">
-              <div class="h-full bg-tertiary rounded-full shadow-[0_0_8px_rgba(178,44,1,0.3)]" :style="{ width: getMacroPercentage('protein') + '%' }"></div>
-            </div>
-          </div>
 
-          <!-- Carbs -->
-          <div class="bg-surface-container-lowest rounded-3xl p-6 shadow-sm border border-outline-variant/5 hover:bg-surface-dim transition-colors group">
-            <div class="flex justify-between items-center mb-4">
-              <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-full bg-secondary-container/30 flex items-center justify-center text-secondary group-hover:scale-110 transition-transform">
-                  <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">grain</span>
+            <!-- Macros Stack -->
+            <div class="md:col-span-5 lg:col-span-4 flex flex-col gap-4">
+              <!-- Protein -->
+              <div class="bg-surface-container-low rounded-xl p-5 hover:bg-surface-dim transition-colors">
+                <div class="flex justify-between items-center mb-3">
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-tertiary text-sm">fitness_center</span>
+                    <span class="font-bold text-sm text-on-surface">Protein</span>
+                  </div>
+                  <span class="text-xs font-bold text-on-surface-variant">{{ Math.round(macros.protein) }}g / {{ dailyGoal.protein }}g</span>
                 </div>
-                <span class="font-bold text-sm text-on-surface uppercase tracking-widest">Carbs</span>
-              </div>
-              <span class="text-xs font-extrabold text-secondary">{{ Math.round(dailyConsumption.carbs) }}g <span class="text-on-surface-variant/50 font-medium">/ {{ macroGoals.carbs }}g</span></span>
-            </div>
-            <div class="w-full h-1.5 bg-surface-variant rounded-full overflow-hidden">
-              <div class="h-full bg-secondary rounded-full shadow-[0_0_8px_rgba(58,104,67,0.3)]" :style="{ width: getMacroPercentage('carbs') + '%' }"></div>
-            </div>
-          </div>
-
-          <!-- Fats -->
-          <div class="bg-surface-container-lowest rounded-3xl p-6 shadow-sm border border-outline-variant/5 hover:bg-surface-dim transition-colors group">
-            <div class="flex justify-between items-center mb-4">
-              <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-full bg-primary-container/30 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
-                  <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">water_drop</span>
+                <div class="w-full h-1 bg-surface-variant rounded-full overflow-hidden">
+                  <div class="h-full bg-tertiary rounded-full transition-all duration-1000" :style="`width: ${Math.min(100, (macros.protein / dailyGoal.protein) * 100)}%`"></div>
                 </div>
-                <span class="font-bold text-sm text-on-surface uppercase tracking-widest">Fats</span>
               </div>
-              <span class="text-xs font-extrabold text-primary">{{ Math.round(dailyConsumption.fat) }}g <span class="text-on-surface-variant/50 font-medium">/ {{ macroGoals.fat }}g</span></span>
-            </div>
-            <div class="w-full h-1.5 bg-surface-variant rounded-full overflow-hidden">
-              <div class="h-full bg-primary rounded-full shadow-[0_0_8px_rgba(126,87,0,0.3)]" :style="{ width: getMacroPercentage('fat') + '%' }"></div>
+              <!-- Carbs -->
+              <div class="bg-surface-container-low rounded-xl p-5 hover:bg-surface-dim transition-colors">
+                <div class="flex justify-between items-center mb-3">
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-secondary text-sm">agriculture</span>
+                    <span class="font-bold text-sm text-on-surface">Carbs</span>
+                  </div>
+                  <span class="text-xs font-bold text-on-surface-variant">{{ Math.round(macros.carbs) }}g / {{ dailyGoal.carbs }}g</span>
+                </div>
+                <div class="w-full h-1 bg-surface-variant rounded-full overflow-hidden">
+                  <div class="h-full bg-secondary rounded-full transition-all duration-1000" :style="`width: ${Math.min(100, (macros.carbs / dailyGoal.carbs) * 100)}%`"></div>
+                </div>
+              </div>
+              <!-- Fats -->
+              <div class="bg-surface-container-low rounded-xl p-5 hover:bg-surface-dim transition-colors">
+                <div class="flex justify-between items-center mb-3">
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary-container text-sm">water_drop</span>
+                    <span class="font-bold text-sm text-on-surface">Fats</span>
+                  </div>
+                  <span class="text-xs font-bold text-on-surface-variant">{{ Math.round(macros.fats) }}g / {{ dailyGoal.fats }}g</span>
+                </div>
+                <div class="w-full h-1 bg-surface-variant rounded-full overflow-hidden">
+                  <div class="h-full bg-primary-container rounded-full transition-all duration-1000" :style="`width: ${Math.min(100, (macros.fats / dailyGoal.fats) * 100)}%`"></div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-    </section>
+        </section>
 
-    <!-- Loading State -->
-    <div v-else class="min-h-[60vh] flex flex-col items-center justify-center gap-4">
-      <div class="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-      <p class="font-label text-sm font-bold text-on-surface-variant uppercase tracking-widest">Calculating Metrics...</p>
-    </div>
-
-    <!-- History Chart -->
-    <section class="mt-16">
-      <div class="flex items-center justify-between mb-8">
-        <h2 class="font-headline text-2xl font-bold tracking-tight text-on-surface">Weekly Journey</h2>
-        <div class="flex gap-2">
-          <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-tertiary"></div><span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">P</span></div>
-          <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-secondary"></div><span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">C</span></div>
-          <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-primary"></div><span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">F</span></div>
-        </div>
-      </div>
-
-      <div class="bg-surface-container-low rounded-[2rem] p-8 h-64 flex items-end justify-around gap-2 shadow-sm border border-outline-variant/5">
-        <div v-for="(day, index) in ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']" :key="index" class="flex-1 flex flex-col items-center gap-4 h-full">
-          <div class="w-full max-w-[40px] flex-1 flex flex-col justify-end gap-0.5 group cursor-help relative">
-            <!-- Tooltip mock -->
-            <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-on-surface text-surface text-[10px] px-2 py-1 rounded-lg z-20 whitespace-nowrap shadow-xl">
-              Protein: 120g | Carbs: 210g
+        <!-- Post-Meal Feedback Section -->
+        <section class="mt-12" v-if="recentRating">
+          <h2 class="font-headline text-2xl font-bold tracking-tight text-on-surface mb-6">Recent Experience</h2>
+          <div class="bg-surface-container-lowest rounded-[1.5rem] shadow-sm overflow-hidden flex flex-col md:flex-row group">
+            <div class="w-full md:w-2/5 h-48 md:h-auto relative">
+              <img :src="recentRating.recipe?.image_url || 'https://lh3.googleusercontent.com/aida-public/AB6AXuBL5n1tjSNBrGc1C9S1X796my1m-GR8n6Ongr5_NJy4JQP8PhghOjaHn955tmIe8u3jCl_365jJ4xeUgDAqbAYLsyTFCF0LOa15A-k_0ieCusFAVkmrwIaUJZ0IBNw90YJ55ZfrnoUm8NP1dT1Va3830eqGvdzYP2Ofa8yQepc7_V3KZHD44XbDx_dwJpYdDmN2n15iKbqii1ak-8S5KNTI5DXBcxDs9w9h_Vu5kFy4uVi-EPkkrH5EHPeqY25tzlCKZdmU50_ljo_G'" alt="Recipe" class="w-full h-full object-cover" />
             </div>
-            
-            <div class="w-full bg-primary/20 rounded-t-full transition-all group-hover:bg-primary/40 shadow-diffuse" :style="{ height: (Math.random() * 20 + 10) + '%' }"></div>
-            <div class="w-full bg-secondary/20 transition-all group-hover:bg-secondary/40 shadow-diffuse" :style="{ height: (Math.random() * 30 + 20) + '%' }"></div>
-            <div class="w-full bg-tertiary/20 transition-all group-hover:bg-tertiary/40 shadow-diffuse" :style="{ height: (Math.random() * 20 + 10) + '%' }"></div>
+            <div class="w-full md:w-3/5 p-6 sm:p-8 flex flex-col justify-between bg-surface-container-lowest transition-colors group-hover:bg-surface-dim">
+              <div>
+                <h3 class="font-headline text-2xl font-bold text-primary mb-2">{{ recentRating.recipe?.title }}</h3>
+                <p class="text-sm text-on-surface-variant mb-6">You cooked this recently.</p>
+                <div class="space-y-6">
+                  <div class="grid grid-cols-2 gap-6 pt-4 border-t border-surface-variant/30">
+                    <div>
+                      <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">Taste Profile</label>
+                      <div class="flex text-primary-container cursor-pointer">
+                        <span v-for="i in 5" :key="'taste'+i" @click="updateRating('taste', i)" class="material-symbols-outlined hover:scale-110 transition-transform" :class="i <= recentRating.taste ? 'icon-fill' : 'text-surface-variant'">star</span>
+                      </div>
+                    </div>
+                    <div>
+                      <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">Prep Difficulty</label>
+                      <div class="flex text-secondary cursor-pointer">
+                        <span v-for="i in 5" :key="'diff'+i" @click="updateRating('difficulty', i)" class="material-symbols-outlined hover:scale-110 transition-transform" :class="i <= recentRating.difficulty ? 'icon-fill' : 'text-surface-variant'">local_fire_department</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          <span class="font-label text-[10px] font-bold text-on-surface-variant">{{ day[0] }}</span>
-        </div>
+        </section>
       </div>
-    </section>
+    </main>
+
+    <!-- BottomNavBar (Mobile Only) -->
+    <nav class="md:hidden bg-background/80 backdrop-blur-md fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-2 rounded-t-3xl z-50 shadow-[0_-8px_24px_rgba(0,0,0,0.06)] border-t border-outline-variant/20">
+      <NuxtLink to="/dashboard" class="flex flex-col items-center justify-center text-stone-500 p-2 hover:text-primary">
+        <span class="material-symbols-outlined mb-1">dashboard</span>
+      </NuxtLink>
+      <NuxtLink to="/pantry" class="flex flex-col items-center justify-center text-stone-500 p-2 hover:text-primary">
+        <span class="material-symbols-outlined mb-1">inventory_2</span>
+      </NuxtLink>
+      <NuxtLink to="/metrics" class="flex flex-col items-center justify-center text-primary p-2">
+        <span class="material-symbols-outlined mb-1 icon-fill">analytics</span>
+      </NuxtLink>
+    </nav>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
 
 const loading = ref(true)
-const macroGoals = ref({ protein: 150, carbs: 250, fat: 70 })
-const dailyConsumption = ref({ protein: 0, carbs: 0, fat: 0 })
+const macros = ref({ calories: 0, protein: 0, carbs: 0, fats: 0 })
+const dailyGoal = ref({ calories: 2400, protein: 150, carbs: 250, fats: 70 })
+const recentRating = ref(null)
+
+const updateRating = async (field, value) => {
+  if (!recentRating.value) return;
+  
+  const previousValue = recentRating.value[field];
+  recentRating.value[field] = value;
+
+  try {
+    const { error } = await supabase
+      .from('ratings')
+      .update({ [field]: value })
+      .eq('id', recentRating.value.id);
+      
+    if (error) throw error;
+  } catch (error) {
+    console.error('Error updating rating:', error);
+    recentRating.value[field] = previousValue;
+    alert('Failed to update rating. Please try again.');
+  }
+}
 
 onMounted(async () => {
   try {
@@ -148,79 +190,52 @@ onMounted(async () => {
       const { data: { session } } = await supabase.auth.getSession()
       userId = session?.user?.id
     }
-    if (!userId) return
-
-    // 1. Fetch Macro Goals from Profile
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('macro_goals_json')
-      .eq('id', userId)
-      .single()
     
-    if (profile?.macro_goals_json) {
-      macroGoals.value = profile.macro_goals_json
-    }
+    if (userId) {
+      // Get profile goals
+      const { data: profile } = await supabase.from('profiles').select('macro_goals_json').eq('id', userId).single()
+      if (profile?.macro_goals_json) {
+        const p = profile.macro_goals_json
+        const fats = p.fat !== undefined ? p.fat : (p.fats !== undefined ? p.fats : dailyGoal.value.fats)
+        dailyGoal.value = { 
+          ...dailyGoal.value, 
+          ...p,
+          fats: fats
+        }
+        dailyGoal.value.calories = Math.round((dailyGoal.value.protein * 4) + (dailyGoal.value.carbs * 4) + (dailyGoal.value.fats * 9))
+      }
 
-    // 2. Fetch Today's Meals and their macros
-    const today = new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(new Date())
-    
-    // We need to find the active plan first
-    const dateStr = new Date().toISOString().split('T')[0]
-    const { data: plan } = await supabase
-      .from('meal_plans')
-      .select('id')
-      .eq('user_id', userId)
-      .lte('start_date', dateStr)
-      .gte('end_date', dateStr)
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .single()
+      // Get today's macros
+      const today = new Date().toISOString().split('T')[0]
+      const { data: macroData } = await supabase.from('user_macros').select('*').eq('user_id', userId).eq('date', today).single()
+      if (macroData) {
+        macros.value = {
+          calories: macroData.calories || 0,
+          protein: macroData.protein || 0,
+          carbs: macroData.carbs || 0,
+          fats: macroData.fats || 0
+        }
+      }
 
-    if (plan) {
-      const { data: items } = await supabase
-        .from('meal_plan_items')
-        .select('*, recipes(macros_json)')
-        .eq('meal_plan_id', plan.id)
-        .eq('day_of_week', today)
+      // Get recent rating
+      const { data: ratingData } = await supabase
+        .from('ratings')
+        .select('*, recipe:recipes(title, image_url)')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single()
       
-      if (items) {
-        items.forEach(item => {
-          const rm = item.recipes?.macros_json
-          if (rm) {
-            dailyConsumption.value.protein += Number(rm.protein || 0)
-            dailyConsumption.value.carbs += Number(rm.carbs || 0)
-            dailyConsumption.value.fat += Number(rm.fat || 0)
-          }
-        })
+      if (ratingData) {
+        recentRating.value = ratingData
       }
     }
-
   } catch (error) {
     console.error("Error fetching metrics:", error)
   } finally {
     loading.value = false
   }
 })
-
-const totalCaloriesGoal = computed(() => {
-  return (macroGoals.value.protein * 4) + (macroGoals.value.carbs * 4) + (macroGoals.value.fat * 9)
-})
-
-const totalCaloriesConsumed = computed(() => {
-  return (dailyConsumption.value.protein * 4) + (dailyConsumption.value.carbs * 4) + (dailyConsumption.value.fat * 9)
-})
-
-const caloriePercentage = computed(() => {
-  if (totalCaloriesGoal.value === 0) return 0
-  return Math.min(Math.round((totalCaloriesConsumed.value / totalCaloriesGoal.value) * 100), 100)
-})
-
-const getMacroPercentage = (type) => {
-  const goal = macroGoals.value[type]
-  const consumed = dailyConsumption.value[type]
-  if (!goal) return 0
-  return Math.min(Math.round((consumed / goal) * 100), 100)
-}
 </script>
 
 <style scoped>
@@ -228,5 +243,8 @@ const getMacroPercentage = (type) => {
 
 .material-symbols-outlined {
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+.icon-fill {
+  font-variation-settings: 'FILL' 1;
 }
 </style>

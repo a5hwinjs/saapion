@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Shared Pantry - The Culinary Alchemist</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-dim": "#dbdad2",
+                        "background": "#fbfaf1",
+                        "on-error-container": "#93000a",
+                        "on-background": "#1b1c17",
+                        "inverse-surface": "#30312b",
+                        "surface-variant": "#e4e3da",
+                        "error-container": "#ffdad6",
+                        "tertiary-container": "#ffad97",
+                        "surface-container-low": "#f5f4eb",
+                        "on-secondary": "#ffffff",
+                        "on-surface-variant": "#514532",
+                        "surface-container-high": "#e9e8e0",
+                        "on-error": "#ffffff",
+                        "inverse-on-surface": "#f2f1e8",
+                        "tertiary": "#b22c01",
+                        "outline": "#847560",
+                        "primary-container": "#ffb300",
+                        "primary": "#7e5700",
+                        "surface-bright": "#fbfaf1",
+                        "on-primary-fixed-variant": "#604100",
+                        "tertiary-fixed": "#ffdbd1",
+                        "on-tertiary-fixed": "#3b0800",
+                        "on-secondary-fixed": "#00210a",
+                        "surface-container-highest": "#e4e3da",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-container": "#b9ecbd",
+                        "error": "#ba1a1a",
+                        "on-surface": "#1b1c17",
+                        "on-tertiary-container": "#972400",
+                        "inverse-primary": "#ffba38",
+                        "surface": "#fbfaf1",
+                        "tertiary-fixed-dim": "#ffb5a1",
+                        "surface-tint": "#7e5700",
+                        "primary-fixed-dim": "#ffba38",
+                        "surface-container": "#efeee5",
+                        "secondary-fixed": "#bcefc0",
+                        "primary-fixed": "#ffdeac",
+                        "outline-variant": "#d6c4ac",
+                        "on-tertiary-fixed-variant": "#881f00",
+                        "on-primary-fixed": "#281900",
+                        "on-primary-container": "#6b4900",
+                        "secondary": "#3a6843",
+                        "on-primary": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-container": "#3e6d47",
+                        "on-secondary-fixed-variant": "#22502d",
+                        "secondary-fixed-dim": "#a0d3a5"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Plus Jakarta Sans"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body selection:bg-primary-container">
+<!-- TopNavBar (Execution from JSON) -->
+<nav class="fixed top-0 w-full z-50 bg-[#fbfaf1]/80 backdrop-blur-lg dark:bg-stone-950/80 shadow-[0_8px_24px_rgba(0,0,0,0.06)] flex justify-between items-center px-6 py-3 w-full">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-2xl" style="font-variation-settings: 'FILL' 1;">restaurant</span>
+<span class="font-headline font-black text-xl text-[#7e5700] tracking-tighter">The Culinary Alchemist</span>
+</div>
+</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="font-headline font-bold tracking-tight text-stone-500 hover:bg-[#f5f4eb] px-3 py-1 rounded transition-colors" href="#">Kitchen Dashboard</a>
+<a class="font-headline font-bold tracking-tight text-[#7e5700] border-b-2 border-[#7e5700] px-3 py-1" href="#">Shared Pantry</a>
+<a class="font-headline font-bold tracking-tight text-stone-500 hover:bg-[#f5f4eb] px-3 py-1 rounded transition-colors" href="#">Meal Planner</a>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<input class="bg-surface-container-low border-none rounded-full py-2 px-10 text-sm focus:ring-2 focus:ring-primary w-64" placeholder="Search ingredients..." type="text"/>
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+</div>
+<button class="material-symbols-outlined text-stone-500 active:scale-95 transition-transform">notifications</button>
+<button class="material-symbols-outlined text-stone-500 active:scale-95 transition-transform">history</button>
+<div class="w-8 h-8 rounded-full bg-surface-container-highest overflow-hidden">
+<img alt="User profile" class="w-full h-full object-cover" data-alt="Close-up portrait of a professional chef in white uniform smiling warmly in a kitchen setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDEM5jNiV0ajvSaIsUUYniOxEr9FM7E-Mcn40DfBqBoA729ntywAKneDVDbMSEf5aZpWF82P_QpxqCYHHWhtKdgOZWftrX3W5Jw_jkx9kUpZlUR7uStsT19Oplt8QlzjQIBJCu_7eYhYoI1OT-uQyOMT8nCLpMbKDXT3tYbWexInt4Rt22Xm6yj6yff8ksYL9djQX8-5zZELjoeXEoo6mWzNIetFk5TRwLz4JIUDghfmnWsf9InZ1k6g9Ny6a8KV5LQmcsFoSR20nL_"/>
+</div>
+</div>
+</nav>
+<!-- SideNavBar (Execution from JSON) -->
+<aside class="fixed left-0 top-0 h-full w-72 bg-[#f5f4eb] dark:bg-stone-900 flex flex-col hidden lg:flex z-40">
+<div class="pt-24 pb-8 px-6">
+<div class="flex items-center gap-3 mb-8">
+<div class="w-12 h-12 bg-primary rounded-xl flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">skillet</span>
+</div>
+<div>
+<h1 class="font-headline text-2xl font-black text-[#7e5700]">The Alchemist</h1>
+<p class="font-body text-stone-600 text-xs font-medium">Family Hub</p>
+</div>
+</div>
+<nav class="space-y-2">
+<a class="flex items-center gap-3 px-4 py-3 text-stone-600 hover:bg-[#fbfaf1]/50 hover:translate-x-1 transition-all rounded-lg font-['Manrope'] font-medium text-sm" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                    Kitchen Dashboard
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 bg-[#ffffff] text-[#7e5700] rounded-lg font-bold shadow-sm transition-all font-['Manrope'] text-sm" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+                    Shared Pantry
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 text-stone-600 hover:bg-[#fbfaf1]/50 hover:translate-x-1 transition-all rounded-lg font-['Manrope'] font-medium text-sm" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+                    Meal Planner
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 text-stone-600 hover:bg-[#fbfaf1]/50 hover:translate-x-1 transition-all rounded-lg font-['Manrope'] font-medium text-sm" href="#">
+<span class="material-symbols-outlined">restaurant_menu</span>
+                    Recipe Lab
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 text-stone-600 hover:bg-[#fbfaf1]/50 hover:translate-x-1 transition-all rounded-lg font-['Manrope'] font-medium text-sm" href="#">
+<span class="material-symbols-outlined">group</span>
+                    Household Settings
+                </a>
+</nav>
+<div class="mt-10">
+<button class="w-full bg-gradient-to-r from-primary to-primary-container text-on-primary py-3 rounded-full font-label font-bold text-sm shadow-lg active:scale-[0.98] transition-all">
+                    Add Ingredient
+                </button>
+</div>
+</div>
+<div class="mt-auto pb-8 px-6 border-t border-outline-variant/15 pt-6">
+<a class="flex items-center gap-3 px-4 py-2 text-stone-600 hover:translate-x-1 transition-all text-sm" href="#">
+<span class="material-symbols-outlined">help_outline</span>
+                Support
+            </a>
+<a class="flex items-center gap-3 px-4 py-2 text-stone-600 hover:translate-x-1 transition-all text-sm" href="#">
+<span class="material-symbols-outlined">logout</span>
+                Log Out
+            </a>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="lg:pl-72 pt-20 min-h-screen">
+<div class="p-8 max-w-[1600px] mx-auto">
+<!-- Header Section -->
+<header class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+<div class="space-y-2">
+<div class="flex items-center gap-2 text-secondary font-bold text-sm tracking-widest uppercase">
+<span class="material-symbols-outlined text-lg">grocery</span>
+                        Inventory Master
+                    </div>
+<h2 class="font-headline text-5xl font-extrabold tracking-tight text-on-surface">Shared Pantry</h2>
+<p class="text-on-surface-variant max-w-md">Real-time tracking of shared household staples and specialized ingredients for the Alchemist's kitchen.</p>
+</div>
+<button class="inline-flex items-center gap-3 px-8 py-4 bg-surface-container-highest hover:bg-surface-dim transition-colors rounded-xl font-label font-bold text-on-surface group">
+<span class="material-symbols-outlined group-hover:rotate-180 transition-transform duration-500">settings</span>
+                    Manage Pantry Setup
+                </button>
+</header>
+<!-- Status Overview Bento -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+<div class="md:col-span-2 bg-surface-container-lowest p-8 rounded-3xl relative overflow-hidden flex items-center">
+<div class="z-10 w-full">
+<h3 class="font-headline text-2xl font-bold mb-4">Urgent Replenishments</h3>
+<div class="flex flex-wrap gap-3">
+<span class="bg-tertiary-container/30 text-on-tertiary-container px-4 py-2 rounded-full text-sm font-bold flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span> Toor Dal (12%)
+                            </span>
+<span class="bg-tertiary-container/30 text-on-tertiary-container px-4 py-2 rounded-full text-sm font-bold flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span> Curry Leaves (8%)
+                            </span>
+<span class="bg-tertiary-container/30 text-on-tertiary-container px-4 py-2 rounded-full text-sm font-bold flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span> Coconut Oil (15%)
+                            </span>
+</div>
+</div>
+<div class="absolute right-0 top-0 h-full w-1/3 opacity-10 bg-gradient-to-l from-tertiary to-transparent pointer-events-none"></div>
+</div>
+<div class="bg-primary-container p-8 rounded-3xl flex flex-col justify-between">
+<div>
+<div class="text-on-primary-container font-black text-4xl mb-1">84%</div>
+<div class="text-on-primary-container/80 font-bold uppercase tracking-wider text-xs">Pantry Optimization</div>
+</div>
+<div class="h-2 w-full bg-white/30 rounded-full mt-4">
+<div class="h-full w-[84%] bg-on-primary-container rounded-full"></div>
+</div>
+</div>
+</section>
+<!-- Categories Carousel -->
+<section class="relative">
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-headline text-2xl font-bold flex items-center gap-3">
+                        Category Inventory
+                        <span class="text-stone-400 font-normal text-base">15 Categories Total</span>
+</h3>
+<div class="flex gap-2">
+<button class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+<div class="flex gap-6 overflow-x-auto hide-scrollbar pb-8 -mx-8 px-8 snap-x snap-mandatory">
+<!-- Pulses & Legumes Card -->
+<div class="min-w-[320px] bg-surface-container-lowest rounded-[2rem] p-6 shadow-sm snap-start flex flex-col h-[500px]">
+<div class="flex items-center justify-between mb-6">
+<div class="w-14 h-14 bg-primary-container/20 rounded-2xl flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-3xl">grass</span>
+</div>
+<span class="bg-surface-container px-3 py-1 rounded-full text-[10px] font-black tracking-widest uppercase">PULSES</span>
+</div>
+<h4 class="font-headline text-xl font-extrabold mb-6">Pulses &amp; Legumes</h4>
+<div class="flex-1 overflow-y-auto space-y-6 pr-2 custom-scrollbar">
+<div class="space-y-2">
+<div class="flex justify-between text-sm font-bold">
+<span>Toor Dal</span>
+<span class="text-tertiary">45%</span>
+</div>
+<div class="h-1 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-tertiary rounded-full" style="width: 45%;"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-sm font-bold">
+<span>Chana Dal</span>
+<span class="text-secondary">82%</span>
+</div>
+<div class="h-1 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 82%;"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-sm font-bold">
+<span>Moong Dal</span>
+<span class="text-primary">60%</span>
+</div>
+<div class="h-1 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 60%;"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-sm font-bold">
+<span>Rajma</span>
+<span class="text-secondary">95%</span>
+</div>
+<div class="h-1 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 95%;"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-sm font-bold">
+<span>Urad Dal</span>
+<span class="text-primary">30%</span>
+</div>
+<div class="h-1 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-tertiary rounded-full" style="width: 30%;"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Oils & Fats Card -->
+<div class="min-w-[320px] bg-surface-container-lowest rounded-[2rem] p-6 shadow-sm snap-start flex flex-col h-[500px]">
+<div class="flex items-center justify-between mb-6">
+<div class="w-14 h-14 bg-secondary/10 rounded-2xl flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-3xl">opacity</span>
+</div>
+<span class="bg-surface-container px-3 py-1 rounded-full text-[10px] font-black tracking-widest uppercase">FATS</span>
+</div>
+<h4 class="font-headline text-xl font-extrabold mb-6">Oils &amp; Fats</h4>
+<div class="flex-1 overflow-y-auto space-y-6 pr-2 custom-scrollbar">
+<div class="space-y-2">
+<div class="flex justify-between text-sm font-bold">
+<span>Coconut Oil</span>
+<span class="text-tertiary">15%</span>
+</div>
+<div class="h-1 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-tertiary rounded-full" style="width: 15%;"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-sm font-bold">
+<span>Ghee (Desi)</span>
+<span class="text-secondary">70%</span>
+</div>
+<div class="h-1 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 70%;"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-sm font-bold">
+<span>Mustard Oil</span>
+<span class="text-primary">55%</span>
+</div>
+<div class="h-1 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 55%;"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-sm font-bold">
+<span>Sesame Oil</span>
+<span class="text-secondary">88%</span>
+</div>
+<div class="h-1 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 88%;"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Whole Spices Card -->
+<div class="min-w-[320px] bg-surface-container-lowest rounded-[2rem] p-6 shadow-sm snap-start flex flex-col h-[500px]">
+<div class="flex items-center justify-between mb-6">
+<div class="w-14 h-14 bg-tertiary/10 rounded-2xl flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-3xl">spa</span>
+</div>
+<span class="bg-surface-container px-3 py-1 rounded-full text-[10px] font-black tracking-widest uppercase">SPICES</span>
+</div>
+<h4 class="font-headline text-xl font-extrabold mb-6">Whole Spices</h4>
+<div class="flex-1 overflow-y-auto space-y-6 pr-2 custom-scrollbar">
+<div class="space-y-2">
+<div class="flex justify-between text-sm font-bold">
+<span>Black Pepper</span>
+<span class="text-secondary">92%</span>
+</div>
+<div class="h-1 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 92%;"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-sm font-bold">
+<span>Cardamom</span>
+<span class="text-primary">40%</span>
+</div>
+<div class="h-1 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 40%;"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-sm font-bold">
+<span>Cinnamon</span>
+<span class="text-secondary">75%</span>
+</div>
+<div class="h-1 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 75%;"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-sm font-bold">
+<span>Cloves</span>
+<span class="text-secondary">65%</span>
+</div>
+<div class="h-1 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 65%;"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Grains & Cereals Card -->
+<div class="min-w-[320px] bg-surface-container-lowest rounded-[2rem] p-6 shadow-sm snap-start flex flex-col h-[500px]">
+<div class="flex items-center justify-between mb-6">
+<div class="w-14 h-14 bg-surface-container-highest rounded-2xl flex items-center justify-center text-on-surface">
+<span class="material-symbols-outlined text-3xl">bakery_dining</span>
+</div>
+<span class="bg-surface-container px-3 py-1 rounded-full text-[10px] font-black tracking-widest uppercase">GRAINS</span>
+</div>
+<h4 class="font-headline text-xl font-extrabold mb-6">Grains &amp; Cereals</h4>
+<div class="flex-1 overflow-y-auto space-y-6 pr-2 custom-scrollbar">
+<div class="space-y-2">
+<div class="flex justify-between text-sm font-bold">
+<span>Basmati Rice</span>
+<span class="text-secondary">85%</span>
+</div>
+<div class="h-1 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 85%;"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-sm font-bold">
+<span>Atta (Whole Wheat)</span>
+<span class="text-primary">50%</span>
+</div>
+<div class="h-1 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 50%;"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-sm font-bold">
+<span>Millet (Ragi)</span>
+<span class="text-secondary">98%</span>
+</div>
+<div class="h-1 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 98%;"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Dairy Card -->
+<div class="min-w-[320px] bg-surface-container-lowest rounded-[2rem] p-6 shadow-sm snap-start flex flex-col h-[500px]">
+<div class="flex items-center justify-between mb-6">
+<div class="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-3xl">egg_alt</span>
+</div>
+<span class="bg-surface-container px-3 py-1 rounded-full text-[10px] font-black tracking-widest uppercase">DAIRY</span>
+</div>
+<h4 class="font-headline text-xl font-extrabold mb-6">Dairy</h4>
+<div class="flex-1 overflow-y-auto space-y-6 pr-2 custom-scrollbar">
+<div class="space-y-2">
+<div class="flex justify-between text-sm font-bold">
+<span>Milk (Full Cream)</span>
+<span class="text-tertiary">20%</span>
+</div>
+<div class="h-1 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-tertiary rounded-full" style="width: 20%;"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-sm font-bold">
+<span>Paneer</span>
+<span class="text-secondary">100%</span>
+</div>
+<div class="h-1 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 100%;"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-sm font-bold">
+<span>Curd (Yogurt)</span>
+<span class="text-primary">45%</span>
+</div>
+<div class="h-1 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 45%;"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Bottom Action Grid -->
+<section class="mt-12 grid grid-cols-1 lg:grid-cols-4 gap-8">
+<div class="lg:col-span-3 bg-surface-container-low rounded-[2.5rem] p-10 flex flex-col md:flex-row items-center gap-10">
+<div class="w-48 h-48 rounded-full overflow-hidden border-8 border-white shadow-xl rotate-3">
+<img alt="Fresh herbs" class="w-full h-full object-cover" data-alt="Vibrant fresh curry leaves and coriander on an old wooden surface with dramatic morning light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCaRTafcnTvbkLK2nxRKoiV-lFu6GsHP1phEqOrBA6D5dhV_UwfplqeIy4lSw677iWDXuU_zhe4Xfxq1CodXSkLVqFT80Wt8ug8TNTuwUKuG4DWbj5DZQ1myWSk8-n2Tmu2zuWs9F8Z19mUi_vmb6gxQ3VpGYFC6ATNDr4bVRIehnnvEAk3bNX9rGfkLAUisPwBLeMx0PMeiI7obpyphcBpCA7zc014BVB1BxLzbf051suBWgD3y3MSgeLhja4DCIwywtgrq1CSdOrb"/>
+</div>
+<div class="flex-1 text-center md:text-left">
+<h4 class="font-headline text-3xl font-extrabold mb-4">Stock Analytics</h4>
+<p class="text-on-surface-variant mb-6 text-lg leading-relaxed">Your pantry usage has decreased by 12% this week. Consider adjusting your next delivery to prevent waste.</p>
+<div class="flex flex-wrap justify-center md:justify-start gap-4">
+<button class="px-6 py-3 bg-primary text-on-primary rounded-full font-label font-bold text-sm shadow-md transition-transform active:scale-95">View Report</button>
+<button class="px-6 py-3 bg-white text-on-surface rounded-full font-label font-bold text-sm shadow-sm border border-outline-variant/30 transition-transform active:scale-95">Sustainability Stats</button>
+</div>
+</div>
+</div>
+<div class="bg-secondary p-8 rounded-[2.5rem] text-on-secondary flex flex-col justify-between">
+<span class="material-symbols-outlined text-5xl mb-6">eco</span>
+<div>
+<h4 class="font-headline text-2xl font-bold mb-2">Zero Waste Zone</h4>
+<p class="text-on-secondary/80 text-sm mb-6">4 recipes found for your almost-empty ingredients.</p>
+<button class="w-full py-4 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-2xl font-bold transition-colors">Start Cooking</button>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Contextual FAB (Suppressed on Details, but used for Quick Actions on Dashboard/Main canvas) -->
+<button class="fixed bottom-8 right-8 w-16 h-16 bg-primary text-on-primary rounded-full shadow-2xl flex items-center justify-center active:scale-90 transition-transform z-50">
+<span class="material-symbols-outlined text-3xl">add</span>
+</button>
+</body></html>

@@ -87,7 +87,7 @@ const route = useRoute()
 
 const navLinks = [
   { to: '/dashboard', label: 'Plan', icon: 'calendar_view_week' },
-  { to: '/onboarding/pantry', label: 'Pantry', icon: 'inventory_2' },
+  { to: '/pantry', label: 'Pantry', icon: 'inventory_2' },
   { to: '/discover', label: 'Discover', icon: 'menu_book' },
   { to: '/metrics', label: 'Macros', icon: 'analytics' },
 ]

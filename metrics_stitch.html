@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Saapion - Macros Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-container": "#6b4900",
+                        "surface-variant": "#e4e3da",
+                        "on-secondary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "background": "#fbfaf1",
+                        "on-tertiary-fixed": "#3b0800",
+                        "tertiary-fixed": "#ffdbd1",
+                        "secondary": "#3a6843",
+                        "on-primary-fixed-variant": "#604100",
+                        "surface-container-highest": "#e4e3da",
+                        "surface-container-high": "#e9e8e0",
+                        "error-container": "#ffdad6",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed-dim": "#ffba38",
+                        "on-error": "#ffffff",
+                        "surface-container": "#efeee5",
+                        "tertiary-fixed-dim": "#ffb5a1",
+                        "surface-dim": "#dbdad2",
+                        "surface-tint": "#7e5700",
+                        "on-tertiary": "#ffffff",
+                        "on-surface-variant": "#514532",
+                        "surface-container-low": "#f5f4eb",
+                        "primary-fixed": "#ffdeac",
+                        "inverse-surface": "#30312b",
+                        "surface-bright": "#fbfaf1",
+                        "on-tertiary-container": "#972400",
+                        "on-tertiary-fixed-variant": "#881f00",
+                        "outline": "#847560",
+                        "on-secondary-fixed": "#00210a",
+                        "on-background": "#1b1c17",
+                        "error": "#ba1a1a",
+                        "tertiary-container": "#ffad97",
+                        "on-secondary-container": "#3e6d47",
+                        "on-primary-fixed": "#281900",
+                        "primary-container": "#ffb300",
+                        "tertiary": "#b22c01",
+                        "inverse-on-surface": "#f2f1e8",
+                        "secondary-fixed": "#bcefc0",
+                        "on-secondary-fixed-variant": "#22502d",
+                        "on-surface": "#1b1c17",
+                        "secondary-fixed-dim": "#a0d3a5",
+                        "inverse-primary": "#ffba38",
+                        "secondary-container": "#b9ecbd",
+                        "primary": "#7e5700",
+                        "surface": "#fbfaf1",
+                        "on-primary": "#ffffff",
+                        "outline-variant": "#d6c4ac"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {},
+                    "fontFamily": {
+                        "headline": ["Plus Jakarta Sans"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-fill {
+            font-variation-settings: 'FILL' 1;
+        }
+        .ambient-shadow {
+            box-shadow: 0 8px 24px rgba(27, 28, 23, 0.06);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body antialiased min-h-screen flex flex-col pb-24 md:pb-0">
+<!-- TopAppBar -->
+<header class="bg-[#fbfaf1]/80 dark:bg-stone-950/80 backdrop-blur-md docked full-width top-0 z-50 sticky flex justify-between items-center px-6 py-4 w-full transition-colors duration-300">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-variant flex-shrink-0">
+<img alt="User profile photo" class="w-full h-full object-cover" data-alt="Close-up portrait of a young man with a warm smile, soft natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDTDA2SdmdnAfTQ7EfxqaQytoSf8PFpnzQH2VBokTwD2TtAhCxOw_h6s_geWj9tnPKkpDy0630PNfTuL_TjUVnapJpNu3-LzE_0HiPky_J1QTy6wytf2EqISQ04g335INQfivtV1wxVAcKf_GdQ4jktg2gCsjorF7qKf_4v5sW4ZLfBDMiq_lAbFGFxU2-VnXezPG13GWVQgtdJJy378hA91c-2ya0wF76UtxfdGkmQlamLvzojYE3wjU05g11zMvJ7so-XJyaqE613"/>
+</div>
+<h1 class="text-2xl font-extrabold text-[#7e5700] dark:text-amber-500 tracking-tighter font-headline">Saapion</h1>
+</div>
+<button class="text-[#7e5700] dark:text-amber-500 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 p-2 rounded-full transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+</header>
+<!-- Main Canvas -->
+<main class="flex-grow max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 space-y-10">
+<!-- Hero: Daily Summary -->
+<section class="space-y-6">
+<div class="flex justify-between items-end">
+<div>
+<h2 class="font-headline text-3xl md:text-4xl font-bold tracking-tight text-primary">Daily Alchemy</h2>
+<p class="text-on-surface-variant mt-1 text-sm md:text-base">Your personalized fuel metrics for today.</p>
+</div>
+<div class="hidden sm:flex items-center gap-2 bg-surface-container-highest px-4 py-2 rounded-full">
+<span class="material-symbols-outlined text-secondary icon-fill text-sm">eco</span>
+<span class="text-xs font-bold uppercase tracking-widest text-secondary">On Track</span>
+</div>
+</div>
+<!-- Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Main Calorie Card (Asymmetric Focus) -->
+<div class="md:col-span-7 lg:col-span-8 bg-surface-container-lowest rounded-[1.5rem] p-6 sm:p-8 ambient-shadow relative overflow-hidden flex flex-col sm:flex-row items-center gap-8 group hover:bg-surface-dim transition-colors duration-300">
+<!-- Circular Progress -->
+<div class="relative w-40 h-40 flex-shrink-0">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 100 100">
+<circle class="stroke-surface-variant" cx="50" cy="50" fill="none" r="45" stroke-linecap="round" stroke-width="6"></circle>
+<circle class="stroke-primary" cx="50" cy="50" fill="none" r="45" stroke-dasharray="282.7" stroke-dashoffset="70" stroke-linecap="round" stroke-width="6"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="font-headline text-3xl font-extrabold text-on-surface">1,850</span>
+<span class="text-xs font-semibold text-on-surface-variant uppercase tracking-widest mt-1">Kcal</span>
+</div>
+</div>
+<div class="flex-grow text-center sm:text-left space-y-2 z-10">
+<h3 class="font-headline text-xl font-bold text-on-surface">Energy Balance</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed">You've consumed 75% of your daily target. A great pace to maintain steady energy levels through the evening.</p>
+<div class="pt-2 text-xs font-medium text-primary">Target: 2,400 kcal</div>
+</div>
+</div>
+<!-- Macros Stack -->
+<div class="md:col-span-5 lg:col-span-4 flex flex-col gap-4">
+<!-- Protein -->
+<div class="bg-surface-container-low rounded-xl p-5 hover:bg-surface-dim transition-colors">
+<div class="flex justify-between items-center mb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary text-sm">fitness_center</span>
+<span class="font-bold text-sm text-on-surface">Protein</span>
+</div>
+<span class="text-xs font-bold text-on-surface-variant">120g / 150g</span>
+</div>
+<div class="w-full h-1 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-tertiary rounded-full" style="width: 80%"></div>
+</div>
+</div>
+<!-- Carbs -->
+<div class="bg-surface-container-low rounded-xl p-5 hover:bg-surface-dim transition-colors">
+<div class="flex justify-between items-center mb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-sm">agriculture</span>
+<span class="font-bold text-sm text-on-surface">Carbs</span>
+</div>
+<span class="text-xs font-bold text-on-surface-variant">210g / 250g</span>
+</div>
+<div class="w-full h-1 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 84%"></div>
+</div>
+</div>
+<!-- Fats -->
+<div class="bg-surface-container-low rounded-xl p-5 hover:bg-surface-dim transition-colors">
+<div class="flex justify-between items-center mb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container text-sm">water_drop</span>
+<span class="font-bold text-sm text-on-surface">Fats</span>
+</div>
+<span class="text-xs font-bold text-on-surface-variant">45g / 70g</span>
+</div>
+<div class="w-full h-1 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-primary-container rounded-full" style="width: 64%"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Post-Meal Feedback Section (Editorial Style) -->
+<section class="mt-12">
+<h2 class="font-headline text-2xl font-bold tracking-tight text-on-surface mb-6">Recent Experience</h2>
+<div class="bg-surface-container-lowest rounded-[1.5rem] ambient-shadow overflow-hidden flex flex-col md:flex-row group">
+<!-- Image Container (Asymmetric) -->
+<div class="w-full md:w-2/5 h-48 md:h-auto relative">
+<img alt="Chettinad Chicken Curry" class="w-full h-full object-cover" data-alt="Overhead view of rich red Chettinad chicken curry in a traditional brass bowl, garnished with curry leaves, warm moody lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBL5n1tjSNBrGc1C9S1X796my1m-GR8n6Ongr5_NJy4JQP8PhghOjaHn955tmIe8u3jCl_365jJ4xeUgDAqbAYLsyTFCF0LOa15A-k_0ieCusFAVkmrwIaUJZ0IBNw90YJ55ZfrnoUm8NP1dT1Va3830eqGvdzYP2Ofa8yQepc7_V3KZHD44XbDx_dwJpYdDmN2n15iKbqii1ak-8S5KNTI5DXBcxDs9w9h_Vu5kFy4uVi-EPkkrH5EHPeqY25tzlCKZdmU50_ljo_G"/>
+<!-- Subtle gradient overlay -->
+<div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent md:hidden"></div>
+<div class="absolute bottom-4 left-4 md:hidden">
+<span class="px-2 py-1 bg-surface-container-highest/90 backdrop-blur text-xs font-bold uppercase tracking-widest text-on-surface rounded-sm">Lunch</span>
+</div>
+</div>
+<!-- Content Container -->
+<div class="w-full md:w-3/5 p-6 sm:p-8 flex flex-col justify-between bg-surface-container-lowest transition-colors group-hover:bg-surface-dim">
+<div>
+<div class="hidden md:inline-block px-2 py-1 bg-surface-container-high text-[10px] font-bold uppercase tracking-widest text-on-surface-variant rounded-sm mb-3">Lunch Entry</div>
+<h3 class="font-headline text-2xl font-bold text-primary mb-2">Chettinad Chicken Curry</h3>
+<p class="text-sm text-on-surface-variant mb-6">A deep, spice-forward traditional dish. Logged 2 hours ago.</p>
+<div class="space-y-6">
+<!-- Verification -->
+<div>
+<label class="block text-sm font-semibold text-on-surface mb-3">Did you eat this?</label>
+<div class="flex gap-3">
+<button class="flex-1 py-3 rounded-xl bg-gradient-to-br from-primary to-primary-container text-white font-bold text-sm shadow-md active:scale-95 transition-transform">Yes, consumed</button>
+<button class="flex-1 py-3 rounded-xl bg-surface-container-highest text-on-surface font-semibold text-sm active:scale-95 transition-transform">Skip / Edit</button>
+</div>
+</div>
+<!-- Ratings -->
+<div class="grid grid-cols-2 gap-6 pt-4 border-t border-surface-variant/30">
+<div>
+<label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">Taste Profile</label>
+<div class="flex text-primary-container">
+<span class="material-symbols-outlined icon-fill">star</span>
+<span class="material-symbols-outlined icon-fill">star</span>
+<span class="material-symbols-outlined icon-fill">star</span>
+<span class="material-symbols-outlined icon-fill">star</span>
+<span class="material-symbols-outlined text-surface-variant">star</span>
+</div>
+</div>
+<div>
+<label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">Prep Difficulty</label>
+<div class="flex text-secondary">
+<span class="material-symbols-outlined icon-fill">local_fire_department</span>
+<span class="material-symbols-outlined icon-fill">local_fire_department</span>
+<span class="material-symbols-outlined text-surface-variant">local_fire_department</span>
+<span class="material-symbols-outlined text-surface-variant">local_fire_department</span>
+<span class="material-symbols-outlined text-surface-variant">local_fire_department</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden bg-[#fbfaf1]/80 dark:bg-stone-950/80 backdrop-blur-md fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-2 rounded-t-3xl z-50 shadow-[0_-8px_24px_rgba(0,0,0,0.06)] tonal boundary using surface-container-low">
+<!-- Plan -->
+<button class="flex flex-col items-center justify-center text-stone-500 dark:text-stone-400 p-2 hover:text-[#7e5700] dark:hover:text-amber-400 scale-98 transition-all active:bg-stone-200 dark:active:bg-stone-800">
+<span class="material-symbols-outlined mb-1">calendar_view_week</span>
+<span class="font-['Manrope'] text-[11px] font-semibold tracking-widest uppercase">Plan</span>
+</button>
+<!-- Pantry -->
+<button class="flex flex-col items-center justify-center text-stone-500 dark:text-stone-400 p-2 hover:text-[#7e5700] dark:hover:text-amber-400 scale-98 transition-all active:bg-stone-200 dark:active:bg-stone-800">
+<span class="material-symbols-outlined mb-1">inventory_2</span>
+<span class="font-['Manrope'] text-[11px] font-semibold tracking-widest uppercase">Pantry</span>
+</button>
+<!-- Macros (ACTIVE) -->
+<button class="flex flex-col items-center justify-center bg-gradient-to-br from-[#7e5700] to-[#ffb300] text-white rounded-full p-3 mb-1 scale-98 transition-all shadow-md relative -top-2">
+<span class="material-symbols-outlined icon-fill">analytics</span>
+<!-- Visually hidden label for accessibility, but design requests specific structure -->
+<span class="sr-only">Macros</span>
+</button>
+<!-- House -->
+<button class="flex flex-col items-center justify-center text-stone-500 dark:text-stone-400 p-2 hover:text-[#7e5700] dark:hover:text-amber-400 scale-98 transition-all active:bg-stone-200 dark:active:bg-stone-800">
+<span class="material-symbols-outlined mb-1">group</span>
+<span class="font-['Manrope'] text-[11px] font-semibold tracking-widest uppercase">House</span>
+</button>
+</nav>
+</body></html>

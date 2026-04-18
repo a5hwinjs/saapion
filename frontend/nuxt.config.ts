@@ -24,7 +24,7 @@ export default defineNuxtConfig({
     public: {
       supabaseUrl: process.env.SUPABASE_URL,
       supabaseKey: process.env.SUPABASE_KEY,
-      apiBase: (process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:8000').replace(/\/$/, '')
+      apiBase: (process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:8000').replace(/\/$/, '') || 'http://localhost:8000'
     }
   },
   nitro: {

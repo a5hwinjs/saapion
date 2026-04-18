@@ -1,45 +1,32 @@
--- Temporary Update Script for Saapion Schema
--- Run this in your Supabase SQL Editor to add image support to your existing tables
+-- Update Supabase Schema for Saapion
 
--- 1. Add image_url column to the ingredients table
--- (The recipes table already has an image_url column from the initial schema)
-ALTER TABLE public.ingredients 
-ADD COLUMN IF NOT EXISTS image_url TEXT;
-
--- 2. Create the Storage Bucket for Saapion Images
--- This creates a public bucket called 'saapion-images'
-INSERT INTO storage.buckets (id, name, public) 
-VALUES ('saapion-images', 'saapion-images', true)
-ON CONFLICT (id) DO NOTHING;
-
--- 3. Set up Storage Security Policies (RLS) for the new bucket
--- (RLS is enabled by default on storage.objects in Supabase)
-
--- Allow public read access to all images (so the frontend can render them)
-CREATE POLICY "Public Access" 
-ON storage.objects FOR SELECT 
-USING ( bucket_id = 'saapion-images' );
-
--- Allow authenticated users to upload new images
-CREATE POLICY "Authenticated users can upload images" 
-ON storage.objects FOR INSERT 
-WITH CHECK (
-    bucket_id = 'saapion-images' 
-    AND auth.role() = 'authenticated'
+CREATE TABLE IF NOT EXISTS public.user_pantry (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
+    ingredient_id UUID REFERENCES public.ingredients(id) ON DELETE CASCADE,
+    amount NUMERIC DEFAULT 0,
+    unit TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+    UNIQUE(user_id, ingredient_id)
 );
 
--- Allow users to update ONLY the images they uploaded
-CREATE POLICY "Users can update their own images"
-ON storage.objects FOR UPDATE
-USING (
-    bucket_id = 'saapion-images' 
-    AND auth.uid() = owner
+CREATE TABLE IF NOT EXISTS public.user_macros (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
+    date DATE NOT NULL DEFAULT CURRENT_DATE,
+    calories NUMERIC DEFAULT 0,
+    protein NUMERIC DEFAULT 0,
+    carbs NUMERIC DEFAULT 0,
+    fats NUMERIC DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+    UNIQUE(user_id, date)
 );
 
--- Allow users to delete ONLY the images they uploaded
-CREATE POLICY "Users can delete their own images"
-ON storage.objects FOR DELETE
-USING (
-    bucket_id = 'saapion-images' 
-    AND auth.uid() = owner
-);
+ALTER TABLE public.user_pantry ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.user_macros ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can manage their pantry." ON public.user_pantry FOR ALL USING (auth.uid() = user_id);
+GRANT ALL ON public.user_pantry TO authenticated;
+
+CREATE POLICY "Users can manage their macros." ON public.user_macros FOR ALL USING (auth.uid() = user_id);
+GRANT ALL ON public.user_macros TO authenticated;

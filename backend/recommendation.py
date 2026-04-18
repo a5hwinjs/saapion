@@ -75,7 +75,7 @@ def generate_weekly_plan(user_id: str):
         user_diet_level = diet_map.get(dietary_pref, 5)
 
         # 2. Fetch user ingredients
-        user_ing_res = supabase.table('user_ingredients').select('ingredient_id').eq('user_id', user_id).execute()
+        user_ing_res = supabase.table('user_pantry').select('ingredient_id').eq('user_id', user_id).execute()
         user_ing_ids = {row['ingredient_id'] for row in user_ing_res.data}
 
         if not user_ing_ids:

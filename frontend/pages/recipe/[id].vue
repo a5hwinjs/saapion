@@ -115,9 +115,18 @@
             {{ logging ? 'sync' : 'bolt' }}
           </span>
         </button>
-        <div v-else class="bg-secondary-container text-on-secondary-container px-8 py-4 rounded-full font-bold flex items-center gap-3 animate-in fade-in zoom-in duration-500">
-          <span class="material-symbols-outlined">check_circle</span>
-          Meal Logged Successfully
+        <div v-else class="bg-secondary-container text-on-secondary-container px-8 py-4 rounded-3xl font-bold flex flex-col items-center gap-3 animate-in fade-in zoom-in duration-500">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined">check_circle</span>
+            Meal Logged Successfully
+          </div>
+          <div v-if="deductedItems.length > 0" class="w-full text-sm font-medium pt-3 border-t border-secondary/20 flex flex-col gap-1">
+            <span class="text-xs uppercase tracking-widest opacity-80 mb-1">Pantry Deductions:</span>
+            <div v-for="item in deductedItems" :key="item.name" class="flex justify-between">
+              <span>{{ item.name }}</span>
+              <span>-{{ item.deducted }} {{ item.unit }}</span>
+            </div>
+          </div>
         </div>
         <p v-if="!isLogged" class="text-on-surface-variant text-xs font-bold uppercase tracking-widest opacity-60">Confirm to update your daily macros</p>
       </div>
@@ -166,7 +175,7 @@ onMounted(async () => {
     let userIngIds = []
     if (userId) {
       const { data: userIngs } = await supabase
-        .from('user_ingredients')
+        .from('user_pantry')
         .select('ingredient_id')
         .eq('user_id', userId)
       userIngIds = userIngs?.map(i => i.ingredient_id) || []
@@ -198,6 +207,8 @@ onMounted(async () => {
   }
 })
 
+const deductedItems = ref([])
+
 const logMeal = async () => {
   logging.value = true
   try {
@@ -207,18 +218,21 @@ const logMeal = async () => {
     const payload = {
       user_id: session.user.id,
       recipe_id: id,
-      action_check: true,
       macros_consumed_json: recipe.value.macros_json,
       taste: 5,
       difficulty: recipe.value.is_quickie ? 1 : 3
     }
 
-    await $fetch(`${config.public.apiBase}/api/log-rating`, {
+    const apiBase = config.public.apiBase || 'http://localhost:8000'
+    const response = await $fetch(`${apiBase}/api/cook`, {
       method: 'POST',
       body: payload
     })
 
     isLogged.value = true
+    if (response.deducted && response.deducted.length > 0) {
+      deductedItems.value = response.deducted
+    }
   } catch (error) {
     alert(error.message)
   } finally {

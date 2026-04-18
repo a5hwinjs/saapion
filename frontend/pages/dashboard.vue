@@ -122,7 +122,8 @@ const fetchActivePlan = async () => {
   loading.value = true
   errorMsg.value = ''
   try {
-    const res = await $fetch(`${config.public.apiBase}/api/get-plan/${userId}`)
+    const apiBase = config.public.apiBase || 'http://localhost:8000'
+    const res = await $fetch(`${apiBase}/api/get-plan/${userId}`)
     if (res.status === 'success' && res.plan && Object.keys(res.plan).length > 0) {
       mockPlan.value = res.plan
     } else {
@@ -154,7 +155,8 @@ const generateNewPlan = async () => {
   errorMsg.value = ''
   
   try {
-    const res = await $fetch(`${config.public.apiBase}/api/generate-plan/${userId}`, {
+    const apiBase = config.public.apiBase || 'http://localhost:8000'
+    const res = await $fetch(`${apiBase}/api/generate-plan/${userId}`, {
       method: 'POST'
     })
     
