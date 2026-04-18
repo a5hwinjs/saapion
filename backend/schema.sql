@@ -6,8 +6,15 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- Create Dietary Hierarchy ENUM
 CREATE TYPE dietary_level AS ENUM ('jain', 'veg', 'eggetarian', 'pescatarian', 'non-veg');
 
+-- Create Ingredient Category ENUM
+CREATE TYPE ingredient_category AS ENUM (
+  'Poultry & Eggs', 'Meat', 'Seafood', 'Pulses & Legumes', 'Dairy', 'Vegetables', 
+  'Leafy Greens', 'Fruits', 'Grains & Cereals', 'Oils & Fats', 'Nuts & Seeds', 
+  'Whole Spices', 'Ground Spices', 'Souring Agents', 'Others'
+);
+
 -- Profiles table (extends auth.users)
-CREATE TABLE profiles (
+CREATE TABLE IF NOT EXISTS profiles (
     id UUID REFERENCES auth.users(id) PRIMARY KEY,
     full_name TEXT,
     dietary_preference dietary_level,
@@ -18,7 +25,7 @@ CREATE TABLE profiles (
 );
 
 -- Ingredients master list
-CREATE TABLE ingredients (
+CREATE TABLE IF NOT EXISTS ingredients (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name TEXT NOT NULL,
     category ingredient_category DEFAULT 'Others',
@@ -29,7 +36,7 @@ CREATE TABLE ingredients (
 );
 
 -- User's Ingredient Pool
-CREATE TABLE user_ingredients (
+CREATE TABLE IF NOT EXISTS user_ingredients (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
     ingredient_id UUID REFERENCES ingredients(id) ON DELETE CASCADE,
@@ -38,7 +45,7 @@ CREATE TABLE user_ingredients (
 );
 
 -- Recipes
-CREATE TABLE recipes (
+CREATE TABLE IF NOT EXISTS recipes (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     title TEXT NOT NULL,
     description TEXT,
@@ -56,7 +63,7 @@ CREATE TABLE recipes (
 );
 
 -- Recipe Ingredients
-CREATE TABLE recipe_ingredients (
+CREATE TABLE IF NOT EXISTS recipe_ingredients (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     recipe_id UUID REFERENCES recipes(id) ON DELETE CASCADE,
     ingredient_id UUID REFERENCES ingredients(id) ON DELETE CASCADE,
@@ -66,7 +73,7 @@ CREATE TABLE recipe_ingredients (
 );
 
 -- Meal Plans
-CREATE TABLE meal_plans (
+CREATE TABLE IF NOT EXISTS meal_plans (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
     start_date DATE NOT NULL,
@@ -75,17 +82,18 @@ CREATE TABLE meal_plans (
 );
 
 -- Meal Plan Items (Specific meals per day)
-CREATE TABLE meal_plan_items (
+CREATE TABLE IF NOT EXISTS meal_plan_items (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     meal_plan_id UUID REFERENCES meal_plans(id) ON DELETE CASCADE,
     recipe_id UUID REFERENCES recipes(id) ON DELETE CASCADE,
     day_of_week TEXT NOT NULL, -- e.g., 'Monday'
     meal_type TEXT NOT NULL, -- e.g., 'Breakfast'
+    user_id UUID REFERENCES profiles(id),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
 -- Post-Recipe Metrics (Ratings)
-CREATE TABLE ratings (
+CREATE TABLE IF NOT EXISTS ratings (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
     recipe_id UUID REFERENCES recipes(id) ON DELETE CASCADE,
@@ -110,13 +118,5 @@ CREATE POLICY "Users can update their own profile." ON profiles FOR UPDATE USING
 
 CREATE POLICY "Users can manage their ingredient pool." ON user_ingredients FOR ALL USING (auth.uid() = user_id);
 CREATE POLICY "Users can manage their meal plans." ON meal_plans FOR ALL USING (auth.uid() = user_id);
--- meal_plan_items requires join for policy or a simplified user_id column. We will add user_id for simpler RLS.
-ALTER TABLE meal_plan_items ADD COLUMN user_id UUID REFERENCES profiles(id);
 CREATE POLICY "Users can manage their meal plan items." ON meal_plan_items FOR ALL USING (auth.uid() = user_id);
-
-CREATE POLICY "Users can manage their ratings." ON ratings FOR ALL USING (auth.uid() = user_id);
-d for simpler RLS.
-ALTER TABLE meal_plan_items ADD COLUMN user_id UUID REFERENCES profiles(id);
-CREATE POLICY "Users can manage their meal plan items." ON meal_plan_items FOR ALL USING (auth.uid() = user_id);
-
 CREATE POLICY "Users can manage their ratings." ON ratings FOR ALL USING (auth.uid() = user_id);

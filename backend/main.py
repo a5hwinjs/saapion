@@ -32,3 +32,11 @@ def api_get_plan(user_id: str):
 def api_generate_plan(user_id: str):
     plan = generate_weekly_plan(user_id)
     return plan
+
+@app.post("/api/log-rating")
+def api_log_rating(rating_data: dict):
+    """
+    Expects: { user_id, recipe_id, action_check, difficulty, taste, macros_consumed_json }
+    """
+    res = supabase.table('ratings').insert(rating_data).execute()
+    return {"status": "success", "data": res.data}

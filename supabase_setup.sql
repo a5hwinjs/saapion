@@ -8,6 +8,13 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- This allows numeric comparison (e.g., veg <= 2)
 CREATE TYPE dietary_level AS ENUM ('jain', 'veg', 'eggetarian', 'pescatarian', 'non-veg');
 
+-- Create Ingredient Category ENUM
+CREATE TYPE ingredient_category AS ENUM (
+  'Poultry & Eggs', 'Meat', 'Seafood', 'Pulses & Legumes', 'Dairy', 'Vegetables', 
+  'Leafy Greens', 'Fruits', 'Grains & Cereals', 'Oils & Fats', 'Nuts & Seeds', 
+  'Whole Spices', 'Ground Spices', 'Souring Agents', 'Others'
+);
+
 -- 2. Create the Profiles table (extends auth.users)
 CREATE TABLE IF NOT EXISTS public.profiles (
     id UUID REFERENCES auth.users(id) PRIMARY KEY,
@@ -129,13 +136,6 @@ BEGIN
   RETURN new;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
-
--- 13. Create the sign-up trigger
-DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
-CREATE TRIGGER on_auth_user_created
-  AFTER INSERT ON auth.users
-  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
-sql SECURITY DEFINER SET search_path = public;
 
 -- 13. Create the sign-up trigger
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;

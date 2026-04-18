@@ -1,37 +1,90 @@
 <template>
-  <div class="saapion-app-container p-4">
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
-      <h1 class="text-3xl font-bold text-gray-900 mb-4 md:mb-0">Your Weekly Plan</h1>
-      <div class="space-x-3 flex">
-        <button @click="generateNewPlan" :disabled="loading" class="bg-accent-teal text-white px-4 py-2 rounded-xl shadow-diffuse hover:bg-teal-600 transition disabled:opacity-50 font-bold">
-          {{ loading ? 'Generating...' : 'Auto-Generate Plan' }}
+  <div class="saapion-dashboard">
+    <!-- Header Section -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-10">
+      <div>
+        <h1 class="text-4xl md:text-5xl font-headline font-extrabold text-on-background tracking-tight mb-2">Weekly Plan</h1>
+        <p class="text-on-surface-variant font-medium text-lg">Personalized meals based on your pantry</p>
+      </div>
+      
+      <!-- Controls -->
+      <div class="flex items-center gap-3">
+        <button @click="generateNewPlan" :disabled="loading" class="bg-gradient-to-br from-primary to-primary-container text-on-primary font-label font-bold tracking-wide px-6 py-3 rounded-full shadow-diffuse hover:shadow-[0_12px_32px_rgba(126,87,0,0.3)] active:scale-[0.98] transition-all duration-300 flex items-center gap-2 disabled:opacity-50">
+          <span class="material-symbols-outlined text-[20px]">{{ loading ? 'sync' : 'magic_button' }}</span>
+          <span>{{ loading ? 'Generating...' : 'Auto-Generate' }}</span>
         </button>
-        <button @click="sharePlan" class="bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-xl shadow-sm hover:bg-gray-50 transition font-bold">Share</button>
+        <button @click="sharePlan" class="bg-surface-container-low text-on-surface-variant hover:text-primary p-3 rounded-full transition-colors border border-outline-variant/10">
+          <span class="material-symbols-outlined">share</span>
+        </button>
       </div>
     </div>
-    
-    <div v-if="errorMsg" class="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded shadow-sm">
-      <p class="text-red-700 font-medium">{{ errorMsg }}</p>
-      <NuxtLink to="/onboarding/pantry" class="mt-2 inline-block text-red-600 underline text-sm">Update Pantry</NuxtLink>
+
+    <!-- Error/Alert Banner -->
+    <div v-if="errorMsg" class="bg-error-container text-on-error-container p-6 rounded-2xl mb-10 flex items-start gap-4 shadow-diffuse animate-pulse">
+      <span class="material-symbols-outlined text-error">warning</span>
+      <div>
+        <h3 class="font-bold">Plan Generation Issue</h3>
+        <p class="text-sm opacity-90">{{ errorMsg }}</p>
+        <NuxtLink to="/onboarding/pantry" class="text-xs font-bold uppercase tracking-widest mt-2 inline-block underline underline-offset-4">Update Pantry &rarr;</NuxtLink>
+      </div>
     </div>
 
-    <div v-if="!mockPlan || Object.keys(mockPlan).length === 0 && !loading && !errorMsg" class="text-center py-10">
-      <p class="text-gray-500">No plan generated yet. Click the button above to create one based on your pantry!</p>
+    <!-- Loading State -->
+    <div v-if="loading && !mockPlan" class="min-h-[60vh] flex flex-col items-center justify-center gap-4">
+      <div class="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+      <p class="font-label text-sm font-bold text-on-surface-variant uppercase tracking-widest">Consulting the Stars...</p>
     </div>
-    
-    <div v-if="mockPlan && Object.keys(mockPlan).length > 0" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-      <div v-for="(meals, day) in mockPlan" :key="day" class="bg-white rounded-2xl shadow-diffuse p-5 border border-white">
-        <h2 class="text-xl font-extrabold mb-4 border-b pb-2 text-accent-teal">{{ day }}</h2>
-        <div class="space-y-4">
-          <div v-for="(recipe, mealType) in meals" :key="mealType" class="bg-[var(--color-bg-light)] p-3 rounded-xl group hover:bg-pastel-mint/30 transition relative border border-transparent hover:border-pastel-mint">
-            <h3 class="text-xs uppercase tracking-wider text-gray-500 mb-1 font-bold">{{ mealType }}</h3>
-            <div class="flex justify-between items-start">
-              <span class="font-medium text-gray-900 pr-2">{{ recipe || 'Not Planned' }}</span>
-              <NuxtLink v-if="recipe" :to="`/recipe/${mockRecipeId(recipe)}`" class="text-sm text-accent-teal hover:text-teal-800 whitespace-nowrap font-semibold">View &rarr;</NuxtLink>
+
+    <!-- Empty State -->
+    <div v-if="!mockPlan && !loading && !errorMsg" class="bg-surface-container-low rounded-3xl p-12 text-center border-2 border-dashed border-outline-variant/20 mb-10">
+      <div class="w-20 h-20 bg-primary-container/20 rounded-full flex items-center justify-center mx-auto mb-6">
+        <span class="material-symbols-outlined text-primary text-4xl">calendar_today</span>
+      </div>
+      <h3 class="text-2xl font-headline font-bold text-on-surface mb-2">No plan generated yet</h3>
+      <p class="text-on-surface-variant max-w-sm mx-auto mb-8">Ready to cook? Click the auto-generate button to create a custom meal plan using ingredients you already have.</p>
+    </div>
+
+    <!-- Week Grid View -->
+    <div v-if="mockPlan && Object.keys(mockPlan).length > 0" class="overflow-x-auto no-scrollbar pb-8 -mx-4 px-4 md:mx-0 md:px-0">
+      <div class="min-w-[1000px] flex flex-col gap-8">
+        <!-- Day Headers Row -->
+        <div class="grid grid-cols-7 gap-4">
+          <div v-for="day in days" :key="day" class="text-center font-headline font-bold text-on-surface-variant tracking-tight py-2 rounded-lg transition-colors"
+               :class="{ 'bg-primary-container/20 text-primary': isToday(day) }">
+            {{ day.slice(0, 3) }}
+          </div>
+        </div>
+
+        <!-- Meal Rows -->
+        <div v-for="mealType in mealTypes" :key="mealType" class="flex items-center gap-4 group">
+          <div class="w-12 shrink-0 font-headline font-bold text-[10px] text-on-surface-variant/40 uppercase tracking-[0.3em] rotate-180" style="writing-mode: vertical-rl;">
+            {{ mealType }}
+          </div>
+          
+          <div class="grid grid-cols-7 gap-4 flex-1">
+            <div v-for="day in days" :key="day" 
+                 class="group/card bg-surface-container-lowest rounded-2xl p-4 shadow-[0_4px_12px_rgba(27,28,23,0.02)] hover:scale-[0.97] hover:bg-surface-dim transition-all cursor-pointer h-40 flex flex-col justify-between border border-transparent hover:border-primary/10 relative overflow-hidden"
+                 @click="viewRecipe(mockPlan[day]?.[mealType]?.id)">
+              
+              <!-- Card Content -->
+              <div v-if="mockPlan[day]?.[mealType]" class="space-y-2 h-full flex flex-col">
+                <div class="w-full h-16 rounded-xl bg-surface-container overflow-hidden mb-1">
+                  <img :src="getRecipeImage(mockPlan[day][mealType])" :alt="mockPlan[day][mealType].title" class="w-full h-full object-cover transition-transform duration-500 group-hover/card:scale-110" />
+                </div>
+                <h4 class="font-headline font-bold text-xs text-on-background leading-tight line-clamp-3">
+                  {{ mockPlan[day][mealType].title }}
+                </h4>
+                <div class="mt-auto flex items-center justify-between text-[10px] font-bold text-secondary uppercase tracking-widest opacity-0 group-hover/card:opacity-100 transition-opacity">
+                  <span>Cook &rarr;</span>
+                </div>
+              </div>
+
+              <!-- Placeholder / Add -->
+              <div v-else class="h-full flex flex-col items-center justify-center opacity-30 group-hover/card:opacity-60 transition-opacity">
+                <span class="material-symbols-outlined text-xl mb-1">add_circle</span>
+                <span class="text-[9px] font-bold uppercase tracking-tighter">Plan</span>
+              </div>
             </div>
-            
-            <!-- Post-Recipe Feedback UI (Mocked trigger) -->
-            <button v-if="recipe" @click="openFeedbackModal(recipe, day)" class="absolute top-3 right-16 text-xs text-blue-500 underline opacity-0 group-hover:opacity-100 transition">Log Metrics</button>
           </div>
         </div>
       </div>
@@ -48,11 +101,11 @@ const mockPlan = ref(null)
 const loading = ref(false)
 const errorMsg = ref('')
 
+const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+const mealTypes = ['Breakfast', 'Lunch', 'Dinner']
+
 onMounted(() => {
-  // Fetch existing plan on load
-  setTimeout(() => {
-    fetchActivePlan()
-  }, 500)
+  fetchActivePlan()
 })
 
 const fetchActivePlan = async () => {
@@ -67,23 +120,20 @@ const fetchActivePlan = async () => {
   if (!userId) return
 
   loading.value = true
+  errorMsg.value = ''
   try {
     const res = await $fetch(`${config.public.apiBase}/api/get-plan/${userId}`)
-    if (res.status === 'success') {
+    if (res.status === 'success' && res.plan && Object.keys(res.plan).length > 0) {
       mockPlan.value = res.plan
     } else {
-      // If no plan exists, generate one automatically
-      generateNewPlan()
+      mockPlan.value = null
     }
   } catch (error) {
     console.error("Error fetching active plan:", error)
+    errorMsg.value = "Unable to connect to the backend server. Alchemy paused."
   } finally {
     loading.value = false
   }
-}
-
-const mockRecipeId = (title) => {
-  return title.toLowerCase().replace(/ /g, '-')
 }
 
 const generateNewPlan = async () => {
@@ -102,8 +152,7 @@ const generateNewPlan = async () => {
 
   loading.value = true
   errorMsg.value = ''
-  mockPlan.value = null
-
+  
   try {
     const res = await $fetch(`${config.public.apiBase}/api/generate-plan/${userId}`, {
       method: 'POST'
@@ -116,36 +165,56 @@ const generateNewPlan = async () => {
     }
   } catch (error) {
     console.error(error)
-    errorMsg.value = `Failed to connect to the Recommendation Engine at ${config.public.apiBase}. Is the FastAPI backend running?`
+    errorMsg.value = `Failed to connect to the Recommendation Engine. Please try again later.`
   } finally {
     loading.value = false
   }
 }
 
-const sharePlan = () => {
-  if (!mockPlan.value) return alert("No plan to share!")
-  
-  let planText = "*Saapion Weekly Meal Plan* 🍛\n\n"
-  for (const [day, meals] of Object.entries(mockPlan.value)) {
-    planText += `*${day}*\n`
-    for (const [meal, recipe] of Object.entries(meals)) {
-      planText += `  • ${meal}: ${recipe}\n`
-    }
-    planText += "\n"
-  }
-  
-  if (navigator.share) {
-    navigator.share({
-      title: 'My Saapion Weekly Meal Plan',
-      text: planText
-    }).catch(console.error)
-  } else {
-    navigator.clipboard.writeText(planText)
-    alert("Plan copied to clipboard for easy sharing!")
-  }
+const isToday = (day) => {
+  const today = new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(new Date())
+  return day === today
 }
 
-const openFeedbackModal = (recipe, day) => {
-  alert(`Opening Post-Recipe Metrics modal for ${recipe} (${day}). Did you cook it? Rate the taste and difficulty.`)
+const getRecipeImage = (recipe) => {
+  if (!recipe) return ''
+  if (recipe.image_url) return recipe.image_url
+  
+  // High-quality static fallback for Indian food
+  return `https://images.unsplash.com/photo-1585937421612-70a008356fbe?q=80&w=400&h=300&auto=format&fit=crop`
+}
+
+const viewRecipe = (id) => {
+  if (!id) return
+  navigateTo(`/recipe/${id}`)
+}
+
+const sharePlan = () => {
+  if (!mockPlan.value) return
+  
+  let text = "My Saapion Weekly Plan:\n"
+  days.forEach(day => {
+    if (mockPlan.value[day]) {
+      text += `\n*${day}*\n`
+      mealTypes.forEach(m => {
+        if (mockPlan.value[day][m]) {
+          text += `- ${m}: ${mockPlan.value[day][m].title}\n`
+        }
+      })
+    }
+  })
+  
+  navigator.clipboard.writeText(text)
+  alert("Plan copied to clipboard for sharing!")
 }
 </script>
+
+<style scoped>
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+</style>

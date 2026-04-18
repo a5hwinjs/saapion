@@ -1,22 +1,41 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;700;800&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   body {
-    /* Set global defaults: pastel background, dark slate text */
-    @apply font-sans bg-pastel-mint text-slate-900;
+    /* Set global defaults: Turmeric Ivory background, Manrope text */
+    @apply font-sans bg-background text-on-background antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display tracking-tight;
   }
 }
 
 @layer utilities {
-  /* Enforce PWA layout constraints globally */
+  /* Enforce Mobile/PWA layout constraints globally */
   .saapion-app-container {
-    @apply max-w-md mx-auto min-h-screen relative overflow-x-hidden bg-pastel-mint shadow-2xl;
+    @apply max-w-[430px] mx-auto min-h-screen relative overflow-x-hidden bg-background;
   }
   
+  /* Glassmorphism for floating elements */
+  .glass {
+    @apply bg-surface/70 backdrop-blur-lg border border-white/20;
+  }
+
+  /* The "No-Line" Rule */
+  .no-border {
+    border-width: 0 !important;
+  }
+
+  /* Tonal Layering Utilities */
+  .surface-lowest { @apply bg-surface-container-lowest; }
+  .surface-low { @apply bg-surface-container-low; }
+  .surface-mid { @apply bg-surface-container; }
+  .surface-high { @apply bg-surface-container-high; }
+  .surface-highest { @apply bg-surface-container-highest; }
+
   /* Hide scrollbars for horizontal sliding lists */
   .hide-scrollbar::-webkit-scrollbar {
     display: none;
